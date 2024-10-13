@@ -6,11 +6,46 @@ import { useEffect } from "react";
 import styled from "styled-components";
 
 const ContentLayout = styled.div`
-  margin: 15px;
+  width: 100%;
+
+  max-height: 100vh;
+  overflow-y: auto;
 `;
 const Entry = styled.div`
   display: flex;
-  gap: 100px;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.thead`
+  background-color: blue;
+`;
+
+const TableRow = styled.tr`
+  color: green;
+  background-color: lightgray;
+  cursor: pointer;
+
+  &:hover {
+    background-color: lightblue;
+  }
+`;
+
+const TableHead = styled.th`
+  text-align: left;
+  padding: 10px;
+  color: white;
+  background-color: blue;
+  border-bottom: 2px solid white;
+`;
+
+const TableData = styled.td`
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 `;
 export default function ContentPage() {
   const { "*": path } = useParams();
@@ -41,12 +76,22 @@ export default function ContentPage() {
     <Layout>
       <NavBar />
       <ContentLayout>
-        {content.map((con) => (
-          <Entry onClick={() => handleClick(con.path)}>
-            <h6>{con.name}</h6>
-            <h6>{con.path}</h6>
-          </Entry>
-        ))}
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
+            </TableRow>
+          </TableHeader>
+          <tbody>
+            {content.map((con, index) => (
+              <TableRow key={index} onClick={() => handleClick(con.path)}>
+                <TableData>{con.name}</TableData>
+                <TableData>{con.file_type}</TableData>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
       </ContentLayout>
     </Layout>
 

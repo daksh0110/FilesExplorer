@@ -34,6 +34,11 @@ export default function NavBar() {
       }}
     >
       <Menu>
+        <SubMenu label="Web">
+          <MenuItem onClick={() => navigate("/googlePhotos")}>
+            Google Photos{" "}
+          </MenuItem>
+        </SubMenu>
         <MenuItem onClick={() => navigate("/")}>Home</MenuItem>
         <SubMenu label="Disks">
           {drives.map((drive) => (

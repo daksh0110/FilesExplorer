@@ -31,6 +31,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} Route />
         <Route path="/*" element={<ContentPage />} />
+        <Route path="/googlePhotos" element={<GooglePhotos />} />
       </Routes>
     </Router>
   );

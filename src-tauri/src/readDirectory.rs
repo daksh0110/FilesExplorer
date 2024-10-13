@@ -5,7 +5,8 @@ use serde::Serialize;
 #[derive(Serialize)]
 pub struct EntryInfo {
     name:String,
-    path:String
+    path:String,
+    file_type:String
 }
 
 pub fn read_directory(path:String)-> Vec<EntryInfo>{
@@ -18,11 +19,22 @@ pub fn read_directory(path:String)-> Vec<EntryInfo>{
                     Ok(entry) =>{ 
                      let path=entry.path();
                      let name=entry.file_name();   
+                     let file_type=entry.file_type().unwrap();
                      let name_string = name.into_string().unwrap_or_else(|_| String::from("Unknown"));
                     let path_string=path.to_string_lossy().to_string();
+                    let file_type_string = if file_type.is_dir() {
+                        "Directory".to_string()
+                    } else if file_type.is_file() {
+                        "File".to_string()
+                    } else if file_type.is_symlink() {
+                        "Symlink".to_string()
+                    } else {
+                        "Unknown".to_string()
+                    };
                      let entry=EntryInfo{
                         name:name_string,
                         path:path_string,
+                        file_type:file_type_string,
                     };
                      directories.push(entry);
                 },

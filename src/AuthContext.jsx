@@ -11,6 +11,8 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
+  // Navigation
+
   // Drives
   const [drives, setDrives] = useState([]);
   useEffect(() => {
@@ -23,7 +25,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // File System Functions
-
   const [content, setContent] = useState([]);
 
   const login = useGoogleLogin({
