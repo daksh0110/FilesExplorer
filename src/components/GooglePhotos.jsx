@@ -17,6 +17,7 @@ const Background = styled.div`
   background-color: #243642;
   height: 100vh;
   padding: 0;
+  width: 100%;
 `;
 const Header = styled.div`
   background-color: #6c48c5;
@@ -51,13 +52,18 @@ export default function GooglePhotos() {
       {isLoggedIn && (
         <Layout>
           <NavBar />
-          <div>
+          <Background>
             <Header>
               <GooglePhotosIcon />
 
               <UserButton />
             </Header>
-          </div>
+            <OuterArea>
+              {allMedia.map((media, index) => (
+                <PhotoBox media={media} />
+              ))}
+            </OuterArea>
+          </Background>
         </Layout>
       )}
       {!isLoggedIn && (
@@ -68,8 +74,3 @@ export default function GooglePhotos() {
     </>
   );
 }
-// <OuterArea>
-//           {allMedia.map((media, index) => (
-//             <PhotoBox media={media} />
-//           ))}
-//         </OuterArea>

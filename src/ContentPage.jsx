@@ -59,13 +59,13 @@ export default function ContentPage() {
       }
 
       console.log("ContentPage is rendering for path: " + path);
-      const finalPath = path === "C:" ? "C:/" : absolute_path(path); // Prepare final path
+      const finalPath = path === "C:" ? "C:/" : absolute_path(path);
       console.log("Final path for reading content: " + finalPath);
-      await Read(finalPath); // Fetch content based on the processed path
+      await Read(finalPath);
     }
 
     FetchContent();
-  }, [path]); // Re-fetch content when path changes
+  }, [path]);
   async function handleClick(path) {
     const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
     navigate("/" + cleanedPath);
