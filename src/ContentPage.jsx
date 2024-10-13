@@ -2,55 +2,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import NavBar from "./components/Navbar";
 import { useAuth } from "./AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const ContentLayout = styled.div`
-  width: 100%;
-
-  max-height: 100vh;
-  overflow-y: auto;
-`;
-const Entry = styled.div`
+import DataTable from "react-data-table-component";
+const TableWrapper = styled.div`
+  height: 100vh;
   display: flex;
-`;
-
-const Table = styled.table`
+  flex-direction: column;
   width: 100%;
-  border-collapse: collapse;
 `;
-
-const TableHeader = styled.thead`
-  background-color: blue;
-`;
-
-const TableRow = styled.tr`
-  color: green;
-  background-color: lightgray;
-  cursor: pointer;
-
-  &:hover {
-    background-color: lightblue;
-  }
-`;
-
-const TableHead = styled.th`
-  text-align: left;
-  padding: 10px;
-  color: white;
-  background-color: blue;
-  border-bottom: 2px solid white;
-`;
-
-const TableData = styled.td`
-  text-align: left;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+const StyledDataTable = styled(DataTable)`
+  flex: 1; /* Ensures the table takes up remaining space */
+  overflow-y: auto; /* Enables vertical scrolling */
 `;
 export default function ContentPage() {
   const { "*": path } = useParams();
   const navigate = useNavigate();
   const { Read, content } = useAuth();
+
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     async function FetchContent() {
@@ -65,34 +36,67 @@ export default function ContentPage() {
     }
 
     FetchContent();
+    // createTable();
   }, [path]);
   async function handleClick(path) {
     const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
     navigate("/" + cleanedPath);
     console.log("Path /" + cleanedPath);
   }
+
+  //   async function createTable() {
+  //     const tableData = await content.map((each, index) => ({
+  //       id: index,
+  //       Name: each.name,
+  //       Type: each.file_type,
+  //       path: each.path,
+  //     }));
+  //     setData(tableData); // Set the new data in state
+  //   }
+
+  let columns = [
+    {
+      name: "name",
+      selector: (row) => row.name,
+      sortable: true,
+    },
+    {
+      name: "file_type",
+      selector: (row) => row.file_type,
+      sortable: true,
+    },
+  ];
+
+  //   data = [
+  //     {
+  //       id: 1,
+  //       Name: "Beetlejuice",
+  //       year: "1988",
+  //     },
+  //     {
+  //       id: 2,
+  //       title: "Ghostbusters",
+  //       year: "1984",
+  //     },
+  //   ];
+
+  function handleRowClick(row) {
+    handleClick(row.path);
+  }
   console.log(content);
   return (
     <Layout>
       <NavBar />
-      <ContentLayout>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-            </TableRow>
-          </TableHeader>
-          <tbody>
-            {content.map((con, index) => (
-              <TableRow key={index} onClick={() => handleClick(con.path)}>
-                <TableData>{con.name}</TableData>
-                <TableData>{con.file_type}</TableData>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
-      </ContentLayout>
+      <TableWrapper>
+        <StyledDataTable
+          columns={columns}
+          data={content}
+          highlightOnHover
+          pointerOnHover
+          selectableRows
+          onRowClicked={handleRowClick}
+        />
+      </TableWrapper>
     </Layout>
 
     //

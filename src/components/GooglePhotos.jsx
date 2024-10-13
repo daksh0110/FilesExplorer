@@ -13,6 +13,7 @@ import PhotoBox from "./MediaBox";
 import { Layout } from "./Layout";
 import NavBar from "./Navbar";
 import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
+
 const Background = styled.div`
   /* background-color: #243642; */
   height: 100vh;

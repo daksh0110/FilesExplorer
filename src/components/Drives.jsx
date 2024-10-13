@@ -28,6 +28,9 @@ export default function Drives() {
     console.log("This is the Drives path " + path);
     navigate("/" + path);
   }
+  useEffect(() => {
+    console.log(drives);
+  }, [drives]);
   return (
     <DrivesGrid>
       {drives.map((drive, index) => (
