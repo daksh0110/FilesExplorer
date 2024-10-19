@@ -5,16 +5,17 @@ import NavBar from "./components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import Drives from "./components/Drives";
+import NewLayout from "./components/NewLayout";
 
 export default function Home() {
-  //   const [content, setContent] = useState([]);
-  //   const navigate = useNavigate();
-
   return (
-    <Layout>
-      <NavBar />
-
+    <NewLayout>
       <Drives />
-    </Layout>
+    </NewLayout>
+    // <Layout>
+    //   <NavBar />
+
+    //   <Drives />
+    // </Layout>
   );
 }

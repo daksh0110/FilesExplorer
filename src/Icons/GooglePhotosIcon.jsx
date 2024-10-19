@@ -1,6 +1,12 @@
+import styled from "styled-components";
+
+const Svg = styled.svg`
+  height: inherit;
+  width: inherit;
+`;
 export default function GooglePhotosIcon() {
   return (
-    <svg
+    <Svg
       xmlns="http://www.w3.org/2000/svg"
       x="0px"
       y="0px"
@@ -40,6 +46,6 @@ export default function GooglePhotosIcon() {
         fill="#1565c0"
         d="M24,37v-6.936c0-1.436,0.499-2.755,1.333-3.794L36,37H24z"
       ></path>
-    </svg>
+    </Svg>
   );
 }

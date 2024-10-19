@@ -6,6 +6,8 @@ import Home from "./Home";
 import NavBar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ContentPage from "./ContentPage";
+import NewLayout from "./components/NewLayout";
+import { useAuth } from "./AuthContext";
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -22,18 +24,21 @@ const GlobalStyle = createGlobalStyle`
 //
 
 function App() {
+  const { currentPath, setCurrentPath } = useAuth();
   return (
-    <Router>
-      <div>
-        <GlobalStyle />
-      </div>
+    <>
+      <Router>
+        <div>
+          <GlobalStyle />
+        </div>
 
-      <Routes>
-        <Route path="/" element={<Home />} Route />
-        <Route path="/*" element={<ContentPage />} />
-        <Route path="/googlePhotos" element={<GooglePhotos />} />
-      </Routes>
-    </Router>
+        <Routes>
+          <Route path="/" element={<Home />} Route />
+          <Route path="/*" element={<ContentPage />} />
+          <Route path="/googlePhotos" element={<GooglePhotos />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

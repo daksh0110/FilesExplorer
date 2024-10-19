@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { invoke } from "@tauri-apps/api/core";
+import { useNavigate } from "react-router-dom";
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   // File System Functions
   const [content, setContent] = useState([]);
+  const [currentPath, setCurrentPath] = useState("/");
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
@@ -64,6 +66,7 @@ export const AuthProvider = ({ children }) => {
     const res = await invoke("read", { path: path });
 
     setContent(res);
+    setCurrentPath(path);
   }
 
   return (
@@ -76,6 +79,8 @@ export const AuthProvider = ({ children }) => {
         drives,
         Read,
         content,
+        currentPath,
+        setCurrentPath,
       }}
     >
       {children}

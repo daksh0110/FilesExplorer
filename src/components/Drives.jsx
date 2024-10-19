@@ -22,10 +22,11 @@ const EachDrive = styled.div`
 `;
 export default function Drives() {
   const navigate = useNavigate();
-  const { drives, Read, setDrives } = useAuth();
+  const { drives, Read, setDrives, setCurrentPath } = useAuth();
 
   async function handleClick(path) {
     console.log("This is the Drives path " + path);
+
     navigate("/" + path);
   }
   useEffect(() => {

@@ -13,6 +13,8 @@ import PhotoBox from "./MediaBox";
 import { Layout } from "./Layout";
 import NavBar from "./Navbar";
 import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
+import NewLayout from "./NewLayout";
+import { useLocation } from "react-router-dom";
 
 const Background = styled.div`
   /* background-color: #243642; */
@@ -33,15 +35,16 @@ const OuterArea = styled.div`
   gap: 1rem;
 `;
 export default function GooglePhotos() {
-  const { isLoggedIn, user, login, logout } = useAuth();
+  const { isLoggedIn, user, login, logout, setCurrentPath } = useAuth();
   const [photosAlbum, setPhotosAlbum] = useState([]);
   const [allMedia, setAllMedia] = useState([]);
-
+  const location = useLocation();
   useEffect(() => {
     if (isLoggedIn && user) {
       console.log(user);
       fetchData();
     }
+    setCurrentPath(location.pathname);
   }, [isLoggedIn, user]);
   async function fetchData() {
     setPhotosAlbum((await fetchAlbums(user)) || []);
@@ -51,21 +54,23 @@ export default function GooglePhotos() {
   return (
     <>
       {isLoggedIn && (
-        <Layout>
-          <NavBar />
-          <Background>
-            <Header>
-              <GooglePhotosIcon />
+        // <Layout>
+        //   <NavBar />
+        //   <Background>
+        //     <Header>
+        //       <GooglePhotosIcon />
 
-              <UserButton />
-            </Header>
-            <OuterArea>
-              {allMedia.map((media, index) => (
-                <PhotoBox media={media} />
-              ))}
-            </OuterArea>
-          </Background>
-        </Layout>
+        //       <UserButton />
+        //     </Header>
+        //     <OuterArea>
+        //       {allMedia.map((media, index) => (
+        //         <PhotoBox media={media} />
+        //       ))}
+        //     </OuterArea>
+        //   </Background>
+        // </Layout>
+
+        <NewLayout></NewLayout>
       )}
       {!isLoggedIn && (
         <div>
