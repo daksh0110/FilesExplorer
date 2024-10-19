@@ -6,6 +6,7 @@ import SideBarMenu from "./SideBarMenu";
 import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
 import DrivesIcon from "../Icons/DrivesIcon";
 import HouseIcon from "../Icons/HouseIcon";
+import { useNavigate } from "react-router-dom";
 
 const Body = styled.div`
   margin: 0;
@@ -58,6 +59,12 @@ const SidebarMenuList = styled.div`
 `;
 export default function NewLayout({ children }) {
   const { currentPath, setCurrentPath, drives } = useAuth();
+  const navigate = useNavigate();
+  function handleKeyPress(event) {
+    if (event.key === "Enter") {
+      navigate("/" + currentPath);
+    }
+  }
   return (
     <>
       <Body>
@@ -65,7 +72,11 @@ export default function NewLayout({ children }) {
           <HeaderContent>
             <BackButton />
             <ForwardButton />
-            <Input value={currentPath} />
+            <Input
+              value={currentPath}
+              onChange={(e) => setCurrentPath(e.target.value)}
+              onKeyDown={handleKeyPress}
+            />
           </HeaderContent>
         </Header>
         <Sidebar>

@@ -11,7 +11,7 @@ import NewLayout from "./components/NewLayout";
 export default function ContentPage() {
   const { "*": path } = useParams();
   const navigate = useNavigate();
-  const { Read, content } = useAuth();
+  const { Read, content, currentPath } = useAuth();
 
   useEffect(() => {
     async function FetchContent() {
@@ -34,6 +34,7 @@ export default function ContentPage() {
   }
 
   function handleRowClick(row) {
+    console.log(row);
     handleClick(row.path);
   }
 
@@ -49,10 +50,23 @@ export default function ContentPage() {
       sortable: true,
     },
   ];
+  console.log(content);
   return (
     <>
       <NewLayout>
-        <DataTable columns={columns} data={content} />
+        <DataTable
+          title={
+            content[0]?.current_directory.trim() === ""
+              ? currentPath
+              : content[0]?.current_directory
+          }
+          columns={columns}
+          data={content}
+          onRowClicked={handleRowClick}
+          highlightOnHover
+          pointerOnHover
+          selectableRows
+        />
       </NewLayout>
     </>
   );

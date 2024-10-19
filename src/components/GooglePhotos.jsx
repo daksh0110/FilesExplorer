@@ -34,6 +34,22 @@ const OuterArea = styled.div`
   margin-top: 1rem;
   gap: 1rem;
 `;
+
+const LoginArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 2rem;
+
+  gap: 2rem;
+  button {
+    width: 25%;
+    height: 40px;
+    border-radius: 20px;
+  }
+`;
 export default function GooglePhotos() {
   const { isLoggedIn, user, login, logout, setCurrentPath } = useAuth();
   const [photosAlbum, setPhotosAlbum] = useState([]);
@@ -73,9 +89,11 @@ export default function GooglePhotos() {
         <NewLayout></NewLayout>
       )}
       {!isLoggedIn && (
-        <div>
-          <h1>Please Log in</h1> <button onClick={login}>Login</button>
-        </div>
+        <NewLayout>
+          <LoginArea>
+            <h1>Please Log in</h1> <button onClick={login}>Login</button>
+          </LoginArea>
+        </NewLayout>
       )}
     </>
   );
