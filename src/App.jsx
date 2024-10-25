@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
 function App() {
   const { currentPath, setCurrentPath } = useAuth();
   return (
-    <>
+    <div onContextMenu={(e) => e.preventDefault()}>
       <Router>
         <div>
           <GlobalStyle />
@@ -38,7 +38,7 @@ function App() {
           <Route path="/googlePhotos" element={<GooglePhotos />} />
         </Routes>
       </Router>
-    </>
+    </div>
   );
 }
 

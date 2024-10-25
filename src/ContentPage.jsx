@@ -7,7 +7,9 @@ import styled from "styled-components";
 
 import DataTable from "react-data-table-component";
 import NewLayout from "./components/NewLayout";
-
+import RighClickContextMenu from "./components/RightClickContextMenu";
+import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
+import "@szhsin/react-menu/dist/index.css";
 const FilePaneContainer = styled.div`
   padding: 16px;
 
