@@ -83,20 +83,16 @@ export default function NewLayout({ children }) {
           <SidebarMenuList>
             <SideBarMenu
               name="Web"
-              subMenuName={[
+              subMenu={[
                 { name: "Google Photos", mount_point: "/googlePhotos" },
               ]}
               icon={<GooglePhotosIcon />}
             />
-            <SideBarMenu
-              name="Disks"
-              subMenuName={drives}
-              icon={<DrivesIcon />}
-            />
+            <SideBarMenu name="Disks" subMenu={drives} icon={<DrivesIcon />} />
 
             <SideBarMenu
               name="Shortcuts"
-              subMenuName={[{ name: "Home", mount_point: "/" }]}
+              subMenu={[{ name: "Home", mount_point: "/" }]}
               icon={<HouseIcon />}
             />
           </SidebarMenuList>

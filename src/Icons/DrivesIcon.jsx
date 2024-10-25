@@ -1,9 +1,5 @@
-import styled from "styled-components";
+import { Svg } from "./HouseIcon";
 
-const Svg = styled.svg`
-  height: inherit;
-  width: inherit;
-`;
 export default function DrivesIcon() {
   return (
     <Svg

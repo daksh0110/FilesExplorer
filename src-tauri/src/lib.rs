@@ -3,10 +3,10 @@
 #[warn(unused_imports)]
 #[warn(non_snake_case)]
 mod disk_info;
-mod readDirectory;
+mod read;
 
 use crate::disk_info::DiskInfo;
-use crate::readDirectory::EntryInfo;
+use crate::read::EntryInfo;
 #[tauri::command]
  fn fetch_logical_drives() ->Vec<DiskInfo> {
    let drives = disk_info::get_disk_info();
@@ -15,7 +15,7 @@ use crate::readDirectory::EntryInfo;
 }
 #[tauri::command]
 fn read(path:String )->Vec<EntryInfo> {
-readDirectory:: read_directory(path)
+read:: read(path)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

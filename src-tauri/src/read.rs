@@ -11,7 +11,7 @@ pub struct EntryInfo {
     current_directory:String,
 }
 
-pub fn read_directory(path:String)-> Vec<EntryInfo>{
+pub fn read(path:String)-> Vec<EntryInfo>{
     let mut directories=Vec::new();
 
     let current_directory_name = Path::new(&path)

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const Svg = styled.svg`
+export const Svg = styled.svg`
   height: inherit;
   width: inherit;
 `;

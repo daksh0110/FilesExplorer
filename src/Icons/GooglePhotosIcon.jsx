@@ -1,9 +1,5 @@
 import styled from "styled-components";
-
-const Svg = styled.svg`
-  height: inherit;
-  width: inherit;
-`;
+import { Svg } from "./HouseIcon";
 export default function GooglePhotosIcon() {
   return (
     <Svg

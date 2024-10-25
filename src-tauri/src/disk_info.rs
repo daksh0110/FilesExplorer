@@ -1,6 +1,7 @@
 use sysinfo::Disks;
 
 use serde::Serialize;
+#[warn(dead_code)]
 #[derive(Debug,Serialize)]
 pub struct DiskInfo{
     name: String,

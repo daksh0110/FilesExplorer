@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import "../../src/TreeviewCSS.css";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 
 const MenuBox = styled.div`
   background-color: white;
@@ -19,15 +19,25 @@ const SubMenuItem = styled.div`
   cursor: pointer;
   height: 20px;
   border-radius: 10px;
+  user-select: none;
 `;
-const SideBarMenu = ({ name, subMenuName = [], icon }) => {
+const SideBarMenu = ({ name, subMenu = [], icon }) => {
   const navigate = useNavigate();
+
+  function handleClick(path) {
+    console.log(path);
+    if (!path.startsWith("/")) {
+      navigate("/" + path, { replace: true });
+    } else {
+      navigate(path);
+    }
+  }
   return (
     <MenuBox>
       {name}
       <MenuItem>
-        {subMenuName.map((item) => (
-          <SubMenuItem key={item} onClick={() => navigate(item.mount_point)}>
+        {subMenu.map((item) => (
+          <SubMenuItem key={item} onClick={() => handleClick(item.mount_point)}>
             {icon}
 
             {item.name}
