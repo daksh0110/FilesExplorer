@@ -12,8 +12,9 @@ import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 const FilePaneContainer = styled.div`
   padding: 16px;
-
+  overflow: hidden;
   border-radius: 8px;
+  height: inherit;
 `;
 
 const Table = styled.table`
@@ -49,6 +50,10 @@ export default function ContentPage() {
   const { "*": path } = useParams();
   const navigate = useNavigate();
   const { Read, content, currentPath, setCurrentPath } = useAuth();
+  // trying context menu
+
+  const [isOpen, setOpen] = useState(false);
+  const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     async function FetchContent() {
@@ -72,10 +77,38 @@ export default function ContentPage() {
   }
 
   console.log(content);
+
+  // function for context contextmeu
+
+  function contextMenu(e) {
+    e.preventDefault();
+    setAnchorPoint({ x: e.clientX, y: e.clientY });
+    setOpen(true);
+  }
   return (
     <>
       <NewLayout>
-        <FilePaneContainer>
+        <FilePaneContainer
+          onContextMenu={(e) => {
+            if (typeof document.hasFocus === "function" && !document.hasFocus())
+              return;
+
+            e.preventDefault();
+            setAnchorPoint({ x: e.clientX, y: e.clientY });
+            setOpen(true);
+          }}
+        >
+          <ControlledMenu
+            anchorPoint={anchorPoint}
+            state={isOpen ? "open" : "closed"}
+            direction="right"
+            onClose={() => setOpen(false)}
+            menuStyle={{}}
+          >
+            <MenuItem>Cut</MenuItem>
+            <MenuItem>Copy</MenuItem>
+            <MenuItem>Paste</MenuItem>
+          </ControlledMenu>
           <Table>
             <thead>
               <tr>
@@ -88,7 +121,12 @@ export default function ContentPage() {
             <tbody>
               {content.map((entry, index) => (
                 <TableRow key={index}>
-                  <TableData onDoubleClick={() => handleClick(entry.path)}>
+                  <TableData
+                    onDoubleClick={() => handleClick(entry.path)}
+                    onContextMenu={(e) => {
+                      contextMenu(e);
+                    }}
+                  >
                     {entry.file_type === "Directory" ? (
                       <FileIcon>📁</FileIcon>
                     ) : (

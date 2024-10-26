@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
 function App() {
   const { currentPath, setCurrentPath } = useAuth();
   return (
-    <div onContextMenu={(e) => e.preventDefault()}>
+    <div>
       <Router>
         <div>
           <GlobalStyle />
