@@ -16,7 +16,8 @@ const FilePaneContainer = styled.div`
   padding: 16px;
   overflow: hidden;
   border-radius: 8px;
-  height: inherit;
+  height: 100%;
+  overflow-y: auto;
 `;
 
 const Table = styled.table`
@@ -51,27 +52,28 @@ const FileIcon = styled.span`
 export default function ContentPage() {
   const { "*": path } = useParams();
   const navigate = useNavigate();
-  const { Read, content, currentPath, setCurrentPath } = useAuth();
+  const { Read, content, currentPath, setCurrentPath, FetchContent } =
+    useAuth();
   // trying context menu
 
   const [isOpen, setOpen] = useState(false);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    async function FetchContent() {
-      function absolute_path(path) {
-        return path.startsWith("/") ? path.slice(1) : path;
-      }
-
-      console.log("ContentPage is rendering for path: " + path);
-      const finalPath = path === "C:" ? "C:/" : absolute_path(path);
-      console.log("Final path for reading content: " + finalPath);
-
-      await Read(finalPath);
-    }
-
-    FetchContent();
+    FetchContent(path);
   }, [path]);
+
+  // async function FetchContent() {
+  //   function absolute_path(path) {
+  //     return path.startsWith("/") ? path.slice(1) : path;
+  //   }
+
+  //   console.log("ContentPage is rendering for path: " + path);
+  //   const finalPath = path === "C:" ? "C:/" : absolute_path(path);
+  //   console.log("Final path for reading content: " + finalPath);
+
+  //   await Read(finalPath);
+  // }
   async function handleClick(path) {
     const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
     navigate("/" + cleanedPath);
@@ -87,28 +89,17 @@ export default function ContentPage() {
     setAnchorPoint({ x: e.clientX, y: e.clientY });
     setOpen(true);
   }
-  async function handleCreate() {
-    console.log(path);
-    const res = await invoke("createfolder", { path: path });
-    console.log(res);
-  }
+
   return (
     <>
       <NewLayout>
-        <ControlledMenu
+        <RighClickContextMenu
           anchorPoint={anchorPoint}
-          state={isOpen ? "open" : "closed"}
-          direction="right"
-          onClose={() => setOpen(false)}
-          menuStyle={{}}
-        >
-          <SubMenu label="Create">
-            <MenuItem onClick={() => handleCreate()}>Folder</MenuItem>
-          </SubMenu>
-          <MenuItem>Cut</MenuItem>
-          <MenuItem>Copy</MenuItem>
-          <MenuItem>Paste</MenuItem>
-        </ControlledMenu>
+          isOpen={isOpen}
+          setOpen={setOpen}
+          path={path}
+        />
+
         <FilePaneContainer
           onContextMenu={(e) => {
             if (typeof document.hasFocus === "function" && !document.hasFocus())

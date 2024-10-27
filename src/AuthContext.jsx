@@ -25,6 +25,20 @@ export const AuthProvider = ({ children }) => {
     Fetch();
   }, []);
 
+  //Fetch Content
+
+  async function FetchContent(path) {
+    function absolute_path(path) {
+      return path.startsWith("/") ? path.slice(1) : path;
+    }
+
+    console.log("ContentPage is rendering for path: " + path);
+    const finalPath = path === "C:" ? "C:/" : absolute_path(path);
+    console.log("Final path for reading content: " + finalPath);
+
+    await Read(finalPath);
+  }
+
   // File System Functions
   const [content, setContent] = useState([]);
   const [currentPath, setCurrentPath] = useState("/");
@@ -81,6 +95,7 @@ export const AuthProvider = ({ children }) => {
         content,
         currentPath,
         setCurrentPath,
+        FetchContent,
       }}
     >
       {children}

@@ -22,8 +22,8 @@ fn read(path:String )->Vec<EntryInfo> {
 read:: read(path)
 }
 #[tauri::command]
-fn createfolder(path: String) ->Result<(),String> {
-  let folder_path = format!("{}/Foler", path);
+fn createfolder(path: String ,name:String) ->Result<(),String> {
+  let folder_path = format!("{}/{}", path ,name);
     
   // Attempt to create the directory
   fs::create_dir(&folder_path).map_err(|e| e.to_string())?; // Handle any errors and convert them to String
