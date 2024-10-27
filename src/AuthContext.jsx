@@ -10,12 +10,15 @@ const AuthContext = createContext();
 // Create a provider component
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [user, setUser] = useState(null);
 
   // Navigation
 
   // Drives
   const [drives, setDrives] = useState([]);
+
+  const [selectedType, setSelectedtype] = useState(null);
   useEffect(() => {
     async function Fetch() {
       await invoke("fetch_logical_drives").then((res) => {
@@ -96,6 +99,8 @@ export const AuthProvider = ({ children }) => {
         currentPath,
         setCurrentPath,
         FetchContent,
+        selectedType,
+        setSelectedtype,
       }}
     >
       {children}

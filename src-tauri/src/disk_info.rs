@@ -1,7 +1,7 @@
 use sysinfo::Disks;
 
 use serde::Serialize;
-#[warn(dead_code)]
+
 #[derive(Debug,Serialize)]
 pub struct DiskInfo{
     name: String,
@@ -10,7 +10,7 @@ pub struct DiskInfo{
     total_space: u64,
     disk_type: String,
 }
-
+#[allow(dead_code)]
 pub fn get_disk_info() ->Vec<DiskInfo> {
     let disks = Disks::new_with_refreshed_list();
     let mut disk_list: Vec<DiskInfo> = Vec::new();

@@ -1,16 +1,9 @@
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Layout } from "./components/Layout";
-import NavBar from "./components/Navbar";
-import { useAuth } from "./AuthContext";
-import { useEffect, useState } from "react";
 import styled from "styled-components";
-
-import DataTable from "react-data-table-component";
 import NewLayout from "./components/NewLayout";
 import RighClickContextMenu from "./components/RightClickContextMenu";
-import { ControlledMenu, MenuItem, SubMenu } from "@szhsin/react-menu";
-import "@szhsin/react-menu/dist/index.css";
-import { invoke } from "@tauri-apps/api/core";
+import { useAuth } from "./AuthContext";
 
 const FilePaneContainer = styled.div`
   padding: 16px;
@@ -26,7 +19,6 @@ const Table = styled.table`
 `;
 
 const TableHeader = styled.th`
-  /* background-color: #333; */
   color: black;
   padding: 10px;
   text-align: left;
@@ -49,46 +41,35 @@ const TableData = styled.td`
 const FileIcon = styled.span`
   margin-right: 10px;
 `;
+
 export default function ContentPage() {
   const { "*": path } = useParams();
   const navigate = useNavigate();
-  const { Read, content, currentPath, setCurrentPath, FetchContent } =
-    useAuth();
-  // trying context menu
+  const { FetchContent, content } = useAuth();
 
   const [isOpen, setOpen] = useState(false);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
+  const [selectedType, setSelectedType] = useState(null);
+  const [entryPath, setEntryPath] = useState(null);
 
   useEffect(() => {
     FetchContent(path);
   }, [path]);
 
-  // async function FetchContent() {
-  //   function absolute_path(path) {
-  //     return path.startsWith("/") ? path.slice(1) : path;
-  //   }
-
-  //   console.log("ContentPage is rendering for path: " + path);
-  //   const finalPath = path === "C:" ? "C:/" : absolute_path(path);
-  //   console.log("Final path for reading content: " + finalPath);
-
-  //   await Read(finalPath);
-  // }
-  async function handleClick(path) {
+  const handleClick = (path) => {
     const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
     navigate("/" + cleanedPath);
-    console.log("Path /" + cleanedPath);
-  }
+  };
 
-  console.log(content);
-
-  // function for context contextmeu
-
-  function contextMenu(e) {
+  const handleContextMenu = (e, type, entrypath) => {
     e.preventDefault();
+    e.stopPropagation();
     setAnchorPoint({ x: e.clientX, y: e.clientY });
-    setOpen(true);
-  }
+    setSelectedType(type);
+    setEntryPath(entrypath);
+    console.log(entrypath);
+    setTimeout(() => setOpen(true), 10);
+  };
 
   return (
     <>
@@ -98,16 +79,15 @@ export default function ContentPage() {
           isOpen={isOpen}
           setOpen={setOpen}
           path={path}
+          selectedType={selectedType}
+          entryPath={entryPath}
         />
-
         <FilePaneContainer
           onContextMenu={(e) => {
-            if (typeof document.hasFocus === "function" && !document.hasFocus())
-              return;
-
             e.preventDefault();
-            setAnchorPoint({ x: e.clientX, y: e.clientY });
-            setOpen(true);
+            if (!isOpen) {
+              handleContextMenu(e, "empty-space");
+            }
           }}
         >
           <Table>
@@ -124,9 +104,13 @@ export default function ContentPage() {
                 <TableRow key={index}>
                   <TableData
                     onDoubleClick={() => handleClick(entry.path)}
-                    onContextMenu={(e) => {
-                      contextMenu(e);
-                    }}
+                    onContextMenu={(e) =>
+                      handleContextMenu(
+                        e,
+                        entry.file_type === "Directory" ? "directory" : "file",
+                        entry.path
+                      )
+                    }
                   >
                     {entry.file_type === "Directory" ? (
                       <FileIcon>📁</FileIcon>
