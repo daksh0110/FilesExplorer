@@ -8,8 +8,10 @@ import styled from "styled-components";
 import DataTable from "react-data-table-component";
 import NewLayout from "./components/NewLayout";
 import RighClickContextMenu from "./components/RightClickContextMenu";
-import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
+import { ControlledMenu, MenuItem, SubMenu } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
+import { invoke } from "@tauri-apps/api/core";
+
 const FilePaneContainer = styled.div`
   padding: 16px;
   overflow: hidden;
@@ -85,9 +87,28 @@ export default function ContentPage() {
     setAnchorPoint({ x: e.clientX, y: e.clientY });
     setOpen(true);
   }
+  async function handleCreate() {
+    console.log(path);
+    const res = await invoke("createfolder", { path: path });
+    console.log(res);
+  }
   return (
     <>
       <NewLayout>
+        <ControlledMenu
+          anchorPoint={anchorPoint}
+          state={isOpen ? "open" : "closed"}
+          direction="right"
+          onClose={() => setOpen(false)}
+          menuStyle={{}}
+        >
+          <SubMenu label="Create">
+            <MenuItem onClick={() => handleCreate()}>Folder</MenuItem>
+          </SubMenu>
+          <MenuItem>Cut</MenuItem>
+          <MenuItem>Copy</MenuItem>
+          <MenuItem>Paste</MenuItem>
+        </ControlledMenu>
         <FilePaneContainer
           onContextMenu={(e) => {
             if (typeof document.hasFocus === "function" && !document.hasFocus())
@@ -98,17 +119,6 @@ export default function ContentPage() {
             setOpen(true);
           }}
         >
-          <ControlledMenu
-            anchorPoint={anchorPoint}
-            state={isOpen ? "open" : "closed"}
-            direction="right"
-            onClose={() => setOpen(false)}
-            menuStyle={{}}
-          >
-            <MenuItem>Cut</MenuItem>
-            <MenuItem>Copy</MenuItem>
-            <MenuItem>Paste</MenuItem>
-          </ControlledMenu>
           <Table>
             <thead>
               <tr>
