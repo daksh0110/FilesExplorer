@@ -6,10 +6,13 @@ use std::fs;
 
 mod disk_info;
 mod read;
+mod sidebarshortcuts;
+
 
 
 use crate::disk_info::DiskInfo;
 use crate::read::EntryInfo;
+use sidebarshortcuts::UserDirectory;
  
 #[tauri::command]
  fn fetch_logical_drives() ->Vec<DiskInfo> {
@@ -31,12 +34,16 @@ fn createfolder(path: String ,name:String) ->Result<(),String> {
   println!("Successfully created folder at: {}", folder_path); // Optional: print success message
   Ok(()) // Return Ok if successful
 }
+#[tauri::command]
+fn fetch_user_directories() -> Vec<UserDirectory> {
+  sidebarshortcuts::get_user_directories()
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![fetch_logical_drives,read,createfolder,])
+        .invoke_handler(tauri::generate_handler![fetch_logical_drives,read,createfolder,fetch_user_directories,])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

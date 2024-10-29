@@ -32,14 +32,14 @@ const SideBarMenu = ({ name, subMenu = [], icon }) => {
       navigate(path);
     }
   }
+
   return (
     <MenuBox>
       {name}
       <MenuItem>
         {subMenu.map((item) => (
           <SubMenuItem key={item} onClick={() => handleClick(item.mount_point)}>
-            {icon}
-
+            {item?.icon}
             {item.name}
           </SubMenuItem>
         ))}

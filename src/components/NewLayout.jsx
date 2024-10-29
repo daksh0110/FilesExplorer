@@ -7,7 +7,12 @@ import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
 import DrivesIcon from "../Icons/DrivesIcon";
 import HouseIcon from "../Icons/HouseIcon";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import DocumentsIcon from "../Icons/DocumentsIcon";
+import PicturesIcon from "../Icons/PicturesIcon";
+import DownloadsIcon from "../Icons/DownloadsIcon";
+import VideosIcon from "../Icons/VideosIcon";
 const Body = styled.div`
   margin: 0;
   display: grid;
@@ -59,12 +64,33 @@ const SidebarMenuList = styled.div`
 `;
 export default function NewLayout({ children }) {
   const { currentPath, setCurrentPath, drives } = useAuth();
+  const [shortcuts, setShortcuts] = useState([]);
   const navigate = useNavigate();
   function handleKeyPress(event) {
     if (event.key === "Enter") {
       navigate("/" + currentPath);
     }
   }
+
+  useEffect(() => {
+    async function fetchSidebarShortcuts() {
+      const res = await invoke("fetch_user_directories");
+      const Icons = [
+        <DocumentsIcon />,
+        <DownloadsIcon />,
+        <PicturesIcon />,
+        <VideosIcon />,
+      ];
+      const shortcutWitchIcon = res.map((item, index) => ({
+        ...item,
+        icon: Icons[index],
+      }));
+
+      setShortcuts(shortcutWitchIcon);
+    }
+    fetchSidebarShortcuts();
+  }, []);
+  console.log(shortcuts);
   return (
     <>
       <Body>
@@ -84,16 +110,21 @@ export default function NewLayout({ children }) {
             <SideBarMenu
               name="Web"
               subMenu={[
-                { name: "Google Photos", mount_point: "/googlePhotos" },
+                {
+                  name: "Google Photos",
+                  mount_point: "/googlePhotos",
+                  icon: <GooglePhotosIcon />,
+                },
               ]}
-              icon={<GooglePhotosIcon />}
             />
             <SideBarMenu name="Disks" subMenu={drives} icon={<DrivesIcon />} />
 
             <SideBarMenu
               name="Shortcuts"
-              subMenu={[{ name: "Home", mount_point: "/" }]}
-              icon={<HouseIcon />}
+              subMenu={[
+                { name: "Home", mount_point: "/", icon: <HouseIcon /> },
+                ...shortcuts,
+              ]}
             />
           </SidebarMenuList>
         </Sidebar>

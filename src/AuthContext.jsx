@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { invoke } from "@tauri-apps/api/core";
 import { useNavigate } from "react-router-dom";
-
+import DrivesIcon from "./Icons/DrivesIcon";
 // Create the AuthContext
 const AuthContext = createContext();
 
@@ -22,7 +22,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     async function Fetch() {
       await invoke("fetch_logical_drives").then((res) => {
-        setDrives(res);
+        const drivesWithIcons = res.map((drive) => ({
+          ...drive,
+          icon: <DrivesIcon />,
+        }));
+
+        setDrives(drivesWithIcons);
       });
     }
     Fetch();
