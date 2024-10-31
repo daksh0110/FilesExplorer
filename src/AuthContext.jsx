@@ -2,8 +2,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { invoke } from "@tauri-apps/api/core";
-import { useNavigate } from "react-router-dom";
+
 import DrivesIcon from "./Icons/DrivesIcon";
+
 // Create the AuthContext
 const AuthContext = createContext();
 
@@ -12,8 +13,6 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [user, setUser] = useState(null);
-
-  // Navigation
 
   // Drives
   const [drives, setDrives] = useState([]);
@@ -45,6 +44,12 @@ export const AuthProvider = ({ children }) => {
     console.log("Final path for reading content: " + finalPath);
 
     await Read(finalPath);
+  }
+
+  // Delete
+
+  async function handleDelete(path) {
+    await invoke("delete", { path: path });
   }
 
   // File System Functions
@@ -106,6 +111,7 @@ export const AuthProvider = ({ children }) => {
         FetchContent,
         selectedType,
         setSelectedtype,
+        handleDelete,
       }}
     >
       {children}
