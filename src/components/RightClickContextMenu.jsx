@@ -41,7 +41,7 @@ export default function RighClickContextMenu({
 
   return (
     <>
-      {selectedType === "directory" && (
+      {(selectedType === "directory" || "file") && (
         <ControlledMenu
           anchorPoint={anchorPoint}
           state={isOpen ? "open" : "closed"}
@@ -55,7 +55,7 @@ export default function RighClickContextMenu({
           <MenuItem>Copy</MenuItem>
           <MenuItem
             onClick={() => {
-              handleDelete(entryPath);
+              handleDelete(entryPath, selectedType);
               FetchContent(path);
             }}
           >

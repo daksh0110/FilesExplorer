@@ -48,8 +48,9 @@ export const AuthProvider = ({ children }) => {
 
   // Delete
 
-  async function handleDelete(path) {
-    await invoke("delete", { path: path });
+  async function handleDelete(path, selectedType) {
+    console.log("selected type:" + selectedType);
+    await invoke("delete", { path: path, filetype: selectedType });
   }
 
   // File System Functions

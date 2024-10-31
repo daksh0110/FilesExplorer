@@ -15,6 +15,7 @@ use crate::disk_info::DiskInfo;
 use crate::read::EntryInfo;
 use sidebarshortcuts::UserDirectory;
 use delete::Delete;
+
  
 #[tauri::command]
  fn fetch_logical_drives() ->Vec<DiskInfo> {
@@ -41,8 +42,9 @@ fn fetch_user_directories() -> Vec<UserDirectory> {
   sidebarshortcuts::get_user_directories()
 }
 #[tauri::command]
-fn delete(path:String)->Result<(),String>{
-  Delete(path)
+fn delete(path:String ,filetype:String)->Result<(),String>{
+  println!("file tpye");
+  Delete(path ,filetype)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
