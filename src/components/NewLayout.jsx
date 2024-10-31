@@ -9,10 +9,7 @@ import HouseIcon from "../Icons/HouseIcon";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import DocumentsIcon from "../Icons/DocumentsIcon";
-import PicturesIcon from "../Icons/PicturesIcon";
-import DownloadsIcon from "../Icons/DownloadsIcon";
-import VideosIcon from "../Icons/VideosIcon";
+
 const Body = styled.div`
   margin: 0;
   display: grid;
@@ -63,8 +60,8 @@ const SidebarMenuList = styled.div`
   gap: 18px;
 `;
 export default function NewLayout({ children }) {
-  const { currentPath, setCurrentPath, drives } = useAuth();
-  const [shortcuts, setShortcuts] = useState([]);
+  const { currentPath, setCurrentPath, drives, shortcuts } = useAuth();
+
   const navigate = useNavigate();
   function handleKeyPress(event) {
     if (event.key === "Enter") {
@@ -72,25 +69,6 @@ export default function NewLayout({ children }) {
     }
   }
 
-  useEffect(() => {
-    async function fetchSidebarShortcuts() {
-      const res = await invoke("fetch_user_directories");
-      const Icons = [
-        <DocumentsIcon />,
-        <DownloadsIcon />,
-        <PicturesIcon />,
-        <VideosIcon />,
-      ];
-      const shortcutWitchIcon = res.map((item, index) => ({
-        ...item,
-        icon: Icons[index],
-      }));
-
-      setShortcuts(shortcutWitchIcon);
-    }
-    fetchSidebarShortcuts();
-  }, []);
-  console.log(shortcuts);
   return (
     <>
       <Body>
@@ -122,7 +100,7 @@ export default function NewLayout({ children }) {
             <SideBarMenu
               name="Shortcuts"
               subMenu={[
-                { name: "Home", mount_point: "/", icon: <HouseIcon /> },
+                { name: "Home", mount_point: "/Home", icon: <HouseIcon /> },
                 ...shortcuts,
               ]}
             />

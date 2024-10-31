@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import "../../src/TreeviewCSS.css";
 import { replace, useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 const MenuBox = styled.div`
   background-color: white;
@@ -23,22 +24,24 @@ const SubMenuItem = styled.div`
 `;
 const SideBarMenu = ({ name, subMenu = [], icon }) => {
   const navigate = useNavigate();
-
+  const { setCurrentPath } = useAuth();
   function handleClick(path) {
-    console.log(path);
     if (!path.startsWith("/")) {
       navigate("/" + path, { replace: true });
     } else {
+      setCurrentPath(path);
       navigate(path);
     }
   }
-
   return (
     <MenuBox>
       {name}
       <MenuItem>
-        {subMenu.map((item) => (
-          <SubMenuItem key={item} onClick={() => handleClick(item.mount_point)}>
+        {subMenu.map((item, index) => (
+          <SubMenuItem
+            key={index}
+            onClick={() => handleClick(item.mount_point)}
+          >
             {item?.icon}
             {item.name}
           </SubMenuItem>

@@ -70,14 +70,7 @@ export default function ContentPage() {
     console.log(entrypath);
     setTimeout(() => setOpen(true), 10);
   };
-  const Input = styled.input`
-    width: max-content;
-    border: none;
-    outline: none;
-    &:hover {
-      background-color: #f5f5f5;
-    }
-  `;
+
   return (
     <>
       <NewLayout>

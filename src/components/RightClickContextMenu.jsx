@@ -41,7 +41,7 @@ export default function RighClickContextMenu({
 
   return (
     <>
-      {(selectedType === "directory" || "file") && (
+      {(selectedType === "directory" || selectedType === "file") && (
         <ControlledMenu
           anchorPoint={anchorPoint}
           state={isOpen ? "open" : "closed"}

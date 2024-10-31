@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { invoke } from "@tauri-apps/api/core";
 import { useAuth } from "../AuthContext";
 import {
   userProfile,
   fetchAlbums,
   fetchAllPhotos,
 } from "../components/UserData";
-import UserButton from "./userButton";
+
 import styled from "styled-components";
-import PhotoBox from "./MediaBox";
-import { Layout } from "./Layout";
-import NavBar from "./Navbar";
-import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
+
 import NewLayout from "./NewLayout";
 import { useLocation } from "react-router-dom";
 

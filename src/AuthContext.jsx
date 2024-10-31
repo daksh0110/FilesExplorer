@@ -2,8 +2,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { invoke } from "@tauri-apps/api/core";
-
 import DrivesIcon from "./Icons/DrivesIcon";
+import DocumentsIcon from "./Icons/DocumentsIcon";
+import DownloadsIcon from "./Icons/DownloadsIcon";
+import PicturesIcon from "./Icons/PicturesIcon";
+import VideosIcon from "./Icons/VideosIcon";
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -13,29 +16,34 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [user, setUser] = useState(null);
-
+  const [shortcuts, setShortcuts] = useState([]);
   // Drives
   const [drives, setDrives] = useState([]);
 
   const [selectedType, setSelectedtype] = useState(null);
   useEffect(() => {
-    async function Fetch() {
-      await invoke("fetch_logical_drives").then((res) => {
-        const drivesWithIcons = res.map((drive) => ({
-          ...drive,
-          icon: <DrivesIcon />,
-        }));
-
-        setDrives(drivesWithIcons);
-      });
-    }
     Fetch();
+    fetchSidebarShortcuts();
   }, []);
 
+  // Fetch Logical Drives
+  async function Fetch() {
+    await invoke("fetch_logical_drives").then((res) => {
+      const drivesWithIcons = res.map((drive, index) => ({
+        ...drive,
+        icon: <DrivesIcon />,
+      }));
+
+      setDrives(drivesWithIcons);
+    });
+  }
   //Fetch Content
 
   async function FetchContent(path) {
     function absolute_path(path) {
+      if (path === "/Home") {
+        return "/Home";
+      }
       return path.startsWith("/") ? path.slice(1) : path;
     }
 
@@ -44,6 +52,29 @@ export const AuthProvider = ({ children }) => {
     console.log("Final path for reading content: " + finalPath);
 
     await Read(finalPath);
+  }
+  async function Read(path) {
+    const res = await invoke("read", { path: path });
+
+    setContent(res);
+    setCurrentPath(path);
+  }
+
+  // Fetching Siderbar Shortcuts
+  async function fetchSidebarShortcuts() {
+    const res = await invoke("fetch_user_directories");
+    const Icons = [
+      <DocumentsIcon />,
+      <DownloadsIcon />,
+      <PicturesIcon />,
+      <VideosIcon />,
+    ];
+    const shortcutWitchIcon = res.map((item, index) => ({
+      ...item,
+      icon: Icons[index],
+    }));
+
+    setShortcuts(shortcutWitchIcon);
   }
 
   // Delete
@@ -90,13 +121,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  async function Read(path) {
-    const res = await invoke("read", { path: path });
-
-    setContent(res);
-    setCurrentPath(path);
-  }
-
   return (
     <AuthContext.Provider
       value={{
@@ -113,6 +137,7 @@ export const AuthProvider = ({ children }) => {
         selectedType,
         setSelectedtype,
         handleDelete,
+        shortcuts,
       }}
     >
       {children}

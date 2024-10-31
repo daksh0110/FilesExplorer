@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import GooglePhotos from "./components/GooglePhotos";
 import styled, { createGlobalStyle } from "styled-components";
-import { invoke } from "@tauri-apps/api/core";
+
 import Home from "./Home";
-import NavBar from "./components/Navbar";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ContentPage from "./ContentPage";
-import NewLayout from "./components/NewLayout";
+
 import { useAuth } from "./AuthContext";
 const GlobalStyle = createGlobalStyle`
   * {
@@ -33,7 +33,7 @@ function App() {
         </div>
 
         <Routes>
-          <Route path="/" element={<Home />} Route />
+          <Route path="/Home" element={<Home />} Route />
           <Route path="/*" element={<ContentPage />} />
           <Route path="/googlePhotos" element={<GooglePhotos />} />
         </Routes>
