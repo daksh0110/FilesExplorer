@@ -8,6 +8,7 @@ mod disk_info;
 mod read;
 mod sidebarshortcuts;
 mod delete;
+mod readfile;
 
 
 
@@ -15,6 +16,7 @@ use crate::disk_info::DiskInfo;
 use crate::read::EntryInfo;
 use sidebarshortcuts::UserDirectory;
 use delete::Delete;
+use readfile::Readfile;
 
  
 #[tauri::command]
@@ -46,12 +48,16 @@ fn delete(path:String ,filetype:String)->Result<(),String>{
   println!("file tpye");
   Delete(path ,filetype)
 }
+#[tauri::command]
+fn readfile (path:String)->Result<(),String>{
+  Readfile(path)
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![fetch_logical_drives,read,createfolder,fetch_user_directories,delete])
+        .invoke_handler(tauri::generate_handler![fetch_logical_drives,read,createfolder,fetch_user_directories,delete,readfile])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

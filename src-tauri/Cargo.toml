@@ -26,4 +26,5 @@ sysinfo="0.32.0"
 walkdir = "2"
 simple-home-dir = "0.4.3"
 dirs = "4.0"
+opener = "0.7.2"
 

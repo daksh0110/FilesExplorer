@@ -20,7 +20,7 @@ export default function RighClickContextMenu({
   entryPath,
 }) {
   const navigate = useNavigate();
-  const { FetchContent, handleDelete } = useAuth();
+  const { FetchContent, handleDelete, ReadFile } = useAuth();
   async function handleCreate() {
     console.log(path);
     const res = await invoke("createfolder", {
@@ -33,10 +33,14 @@ export default function RighClickContextMenu({
   }
 
   function handleOpen() {
-    const cleanedPath = entryPath.startsWith("/")
-      ? entryPath.slice(1)
-      : entryPath;
-    navigate("/" + cleanedPath);
+    if (selectedType === "directory") {
+      const cleanedPath = entryPath.startsWith("/")
+        ? entryPath.slice(1)
+        : entryPath;
+      navigate("/" + cleanedPath);
+    } else {
+      ReadFile(entryPath);
+    }
   }
 
   return (
@@ -51,8 +55,6 @@ export default function RighClickContextMenu({
         >
           <MenuItem onClick={() => handleOpen()}>Open</MenuItem>
 
-          <MenuItem>Cut</MenuItem>
-          <MenuItem>Copy</MenuItem>
           <MenuItem
             onClick={() => {
               handleDelete(entryPath, selectedType);
@@ -75,9 +77,6 @@ export default function RighClickContextMenu({
           <SubMenu label="Create">
             <MenuItem onClick={() => handleCreate()}>Folder</MenuItem>
           </SubMenu>
-          <MenuItem>Cut</MenuItem>
-          <MenuItem>Copy</MenuItem>
-          <MenuItem>Paste</MenuItem>
         </ControlledMenu>
       )}
     </>

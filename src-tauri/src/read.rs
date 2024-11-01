@@ -14,6 +14,7 @@ pub struct EntryInfo {
 pub fn read(path:String)-> Vec<EntryInfo>{
     let mut directories=Vec::new();
 
+
     let current_directory_name = Path::new(&path)
         .file_name()
         .unwrap_or_else(|| std::ffi::OsStr::new(""))

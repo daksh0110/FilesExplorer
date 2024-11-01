@@ -45,7 +45,7 @@ const FileIcon = styled.span`
 export default function ContentPage() {
   const { "*": path } = useParams();
   const navigate = useNavigate();
-  const { FetchContent, content } = useAuth();
+  const { FetchContent, content, ReadFile } = useAuth();
 
   const [isOpen, setOpen] = useState(false);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
@@ -56,9 +56,14 @@ export default function ContentPage() {
     FetchContent(path);
   }, [path]);
 
-  const handleClick = (path) => {
-    const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
-    navigate("/" + cleanedPath);
+  const handleClick = (path, file_type) => {
+    console.log("file_type is :" + file_type);
+    if (file_type === "Directory") {
+      const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
+      navigate("/" + cleanedPath);
+    } else {
+      ReadFile(path);
+    }
   };
 
   const handleContextMenu = (e, type, entrypath) => {
@@ -103,7 +108,9 @@ export default function ContentPage() {
               {content.map((entry, index) => (
                 <TableRow key={index}>
                   <TableData
-                    onDoubleClick={() => handleClick(entry.path)}
+                    onDoubleClick={() =>
+                      handleClick(entry.path, entry.file_type)
+                    }
                     onContextMenu={(e) =>
                       handleContextMenu(
                         e,

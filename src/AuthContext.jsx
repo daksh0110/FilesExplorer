@@ -49,13 +49,7 @@ export const AuthProvider = ({ children }) => {
     const finalPath = path === "C:" ? "C:/" : absolute_path(path);
     console.log("Final path for reading content: " + finalPath);
 
-    await Read(finalPath);
-  }
-  async function Read(path) {
-    const res = await invoke("read", { path: path });
-
-    setContent(res);
-    setCurrentPath(path);
+    await ReadDirectory(finalPath);
   }
 
   // Fetching Siderbar Shortcuts
@@ -74,11 +68,22 @@ export const AuthProvider = ({ children }) => {
 
     setShortcuts(shortcutWitchIcon);
   }
+  //File System related functions
+  //Read Direcotry
+  async function ReadDirectory(path) {
+    const res = await invoke("read", { path: path });
+
+    setContent(res);
+    setCurrentPath(path);
+  }
+
+  // Read File
+  async function ReadFile(path) {
+    await invoke("readfile", { path: path });
+  }
 
   // Delete
-
   async function handleDelete(path, selectedType) {
-    console.log("selected type:" + selectedType);
     await invoke("delete", { path: path, filetype: selectedType });
   }
 
@@ -127,7 +132,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         drives,
-        Read,
+        ReadDirectory,
         content,
         currentPath,
         setCurrentPath,
@@ -136,6 +141,7 @@ export const AuthProvider = ({ children }) => {
         setSelectedtype,
         handleDelete,
         shortcuts,
+        ReadFile,
       }}
     >
       {children}

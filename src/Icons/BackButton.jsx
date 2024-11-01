@@ -3,6 +3,7 @@ import styled from "styled-components";
 const Svg1 = styled.svg`
   height: inherit;
   max-height: 40px;
+  cursor: pointer;
 `;
 export default function BackButton() {
   const navigate = useNavigate();
