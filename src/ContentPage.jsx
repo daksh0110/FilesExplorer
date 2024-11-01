@@ -57,7 +57,6 @@ export default function ContentPage() {
   }, [path]);
 
   const handleClick = (path, file_type) => {
-    console.log("file_type is :" + file_type);
     if (file_type === "Directory") {
       const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
       navigate("/" + cleanedPath);

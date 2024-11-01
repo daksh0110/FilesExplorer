@@ -45,9 +45,7 @@ export const AuthProvider = ({ children }) => {
       return path.startsWith("/") ? path.slice(1) : path;
     }
 
-    console.log("ContentPage is rendering for path: " + path);
     const finalPath = path === "C:" ? "C:/" : absolute_path(path);
-    console.log("Final path for reading content: " + finalPath);
 
     await ReadDirectory(finalPath);
   }

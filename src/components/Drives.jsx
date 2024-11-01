@@ -4,13 +4,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const DrivesGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 2rem;
   height: fit-content;
-  padding: 1rem;
+  width: fit-content;
 `;
 const EachDrive = styled.div`
+  padding: 5px;
+  width: max-content;
+
   cursor: pointer;
   &:hover,
   &focus {
@@ -20,9 +24,41 @@ const EachDrive = styled.div`
     background-color: lightblue;
   }
 `;
+const DrivesHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+`;
+const DrivesHeading = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid lightgray;
+  width: 50%;
+  margin: 0 auto;
+  padding-bottom: 4px;
+  font-size: large;
+  letter-spacing: 2px;
+`;
+const ProgressBar = styled.progress`
+  height: 20px;
+  border-radius: 0;
+  &::-webkit-progress-bar {
+    background-color: #e0e0e0;
+    border-radius: 0;
+  }
+  &::-webkit-progress-value {
+    background-color: #1c64f2;
+    border-radius: 0;
+  }
+  &::-moz-progress-bar {
+    background-color: #1c64f2;
+    border-radius: 0;
+  }
+`;
 export default function Drives() {
   const navigate = useNavigate();
-  const { drives, Read, setDrives, setCurrentPath } = useAuth();
+  const { drives } = useAuth();
 
   async function handleClick(path) {
     console.log("This is the Drives path " + path);
@@ -32,17 +68,36 @@ export default function Drives() {
   useEffect(() => {
     console.log(drives);
   }, [drives]);
+
+  function conversion(number) {
+    return Math.trunc(Number(number) / (1024 * 1024 * 1024));
+  }
+
   return (
-    <DrivesGrid>
-      {drives.map((drive, index) => (
-        <EachDrive key={index} onClick={() => handleClick(drive.mount_point)}>
-          <h5>{drive.name}</h5>
-          <h5>{drive.mount_point}</h5>
-          <h5>{Number(drive.available_space) / (1024 * 1024 * 1024)}</h5>
-          <h5>{drive.total_space}</h5>
-          <h5>{drive.disk_type}</h5>
-        </EachDrive>
-      ))}
-    </DrivesGrid>
+    <DrivesHeader>
+      <DrivesHeading> All Drives</DrivesHeading>
+
+      <DrivesGrid>
+        {drives.map((drive, index) => (
+          <EachDrive key={index} onClick={() => handleClick(drive.mount_point)}>
+            <h5>
+              {drive.name} ({drive.disk_type})
+            </h5>
+            <h5>{drive.mount_point}</h5>
+            <ProgressBar
+              value={
+                conversion(drive.total_space) -
+                conversion(drive.available_space)
+              }
+              max={Number(drive.total_space) / (1024 * 1024 * 1024)}
+            />
+            <h5>
+              {conversion(drive.available_space)} GB free of{" "}
+              {conversion(drive.total_space)} GB
+            </h5>
+          </EachDrive>
+        ))}
+      </DrivesGrid>
+    </DrivesHeader>
   );
 }
