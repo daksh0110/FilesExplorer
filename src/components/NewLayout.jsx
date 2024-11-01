@@ -7,8 +7,6 @@ import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
 import DrivesIcon from "../Icons/DrivesIcon";
 import HouseIcon from "../Icons/HouseIcon";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 
 const Body = styled.div`
   margin: 0;
@@ -65,7 +63,7 @@ export default function NewLayout({ children }) {
   const navigate = useNavigate();
   function handleKeyPress(event) {
     if (event.key === "Enter") {
-      navigate("/" + currentPath);
+      navigate(event.target.value);
     }
   }
 
@@ -100,7 +98,7 @@ export default function NewLayout({ children }) {
             <SideBarMenu
               name="Shortcuts"
               subMenu={[
-                { name: "Home", mount_point: "/Home", icon: <HouseIcon /> },
+                { name: "Home", mount_point: "/home", icon: <HouseIcon /> },
                 ...shortcuts,
               ]}
             />

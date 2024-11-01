@@ -1,5 +1,6 @@
 // AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
+
 import { useGoogleLogin } from "@react-oauth/google";
 import { invoke } from "@tauri-apps/api/core";
 import DrivesIcon from "./Icons/DrivesIcon";
@@ -41,9 +42,6 @@ export const AuthProvider = ({ children }) => {
 
   async function FetchContent(path) {
     function absolute_path(path) {
-      if (path === "/Home") {
-        return "/Home";
-      }
       return path.startsWith("/") ? path.slice(1) : path;
     }
 
@@ -86,7 +84,7 @@ export const AuthProvider = ({ children }) => {
 
   // File System Functions
   const [content, setContent] = useState([]);
-  const [currentPath, setCurrentPath] = useState("/");
+  const [currentPath, setCurrentPath] = useState("/home");
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
