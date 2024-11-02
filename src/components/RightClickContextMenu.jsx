@@ -18,9 +18,10 @@ export default function RighClickContextMenu({
   path,
   selectedType,
   entryPath,
+  name,
 }) {
   const navigate = useNavigate();
-  const { FetchContent, handleDelete, ReadFile } = useAuth();
+  const { FetchContent, handleDelete, ReadFile, CopyFile, Paste } = useAuth();
   async function handleCreate() {
     console.log(path);
     const res = await invoke("createfolder", {
@@ -43,6 +44,15 @@ export default function RighClickContextMenu({
     }
   }
 
+  async function handleDeleteAndRefresh() {
+    await handleDelete(entryPath, selectedType);
+    await FetchContent(path);
+  }
+
+  async function handlePaste(path) {
+    await Paste(path);
+    FetchContent(path);
+  }
   return (
     <>
       {(selectedType === "directory" || selectedType === "file") && (
@@ -54,15 +64,8 @@ export default function RighClickContextMenu({
           menuStyle={{}}
         >
           <MenuItem onClick={() => handleOpen()}>Open</MenuItem>
-
-          <MenuItem
-            onClick={() => {
-              handleDelete(entryPath, selectedType);
-              FetchContent(path);
-            }}
-          >
-            Delete
-          </MenuItem>
+          <MenuItem onClick={() => CopyFile(entryPath)}>Copy</MenuItem>
+          <MenuItem onClick={handleDeleteAndRefresh}>Delete</MenuItem>
         </ControlledMenu>
       )}
 
@@ -77,6 +80,7 @@ export default function RighClickContextMenu({
           <SubMenu label="Create">
             <MenuItem onClick={() => handleCreate()}>Folder</MenuItem>
           </SubMenu>
+          <MenuItem onClick={() => handlePaste(path)}>Paste</MenuItem>
         </ControlledMenu>
       )}
     </>

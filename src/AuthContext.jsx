@@ -79,7 +79,17 @@ export const AuthProvider = ({ children }) => {
   async function ReadFile(path) {
     await invoke("readfile", { path: path });
   }
+  // Copy file
 
+  async function CopyFile(path, name) {
+    await invoke("copy", { path: path });
+  }
+
+  //Paste
+
+  async function Paste(path) {
+    await invoke("paste", { path: path });
+  }
   // Delete
   async function handleDelete(path, selectedType) {
     await invoke("delete", { path: path, filetype: selectedType });
@@ -140,6 +150,8 @@ export const AuthProvider = ({ children }) => {
         handleDelete,
         shortcuts,
         ReadFile,
+        CopyFile,
+        Paste,
       }}
     >
       {children}

@@ -51,6 +51,7 @@ export default function ContentPage() {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [selectedType, setSelectedType] = useState(null);
   const [entryPath, setEntryPath] = useState(null);
+  const [entryname, setEntryName] = useState(null);
 
   useEffect(() => {
     FetchContent(path);
@@ -65,12 +66,13 @@ export default function ContentPage() {
     }
   };
 
-  const handleContextMenu = (e, type, entrypath) => {
+  const handleContextMenu = (e, type, entrypath, name) => {
     e.preventDefault();
     e.stopPropagation();
     setAnchorPoint({ x: e.clientX, y: e.clientY });
     setSelectedType(type);
     setEntryPath(entrypath);
+    setEntryName(name);
     console.log(entrypath);
     setTimeout(() => setOpen(true), 10);
   };
@@ -85,6 +87,7 @@ export default function ContentPage() {
           path={path}
           selectedType={selectedType}
           entryPath={entryPath}
+          entryName={entryname}
         />
         <FilePaneContainer
           onContextMenu={(e) => {
@@ -114,7 +117,8 @@ export default function ContentPage() {
                       handleContextMenu(
                         e,
                         entry.file_type === "Directory" ? "directory" : "file",
-                        entry.path
+                        entry.path,
+                        entry.name
                       )
                     }
                   >
