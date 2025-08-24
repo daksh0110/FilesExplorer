@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { PhotoBoxProps } from "../types";
 
 const Image = styled.img`
   height: 10rem;
@@ -14,7 +15,7 @@ const ImageBox = styled.div`
   background-color: #f5f5f7;
   cursor: pointer;
 `;
-export default function PhotoBox({ media }) {
+export default function PhotoBox({ media }: PhotoBoxProps) {
   return (
     <ImageBox>
       <Image src={media.baseUrl} />
