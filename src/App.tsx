@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import GooglePhotos from "./components/GooglePhotos";
 import styled, { createGlobalStyle } from "styled-components";
-
 import Home from "./Home";
 
 import {

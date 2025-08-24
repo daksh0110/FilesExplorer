@@ -1,9 +1,9 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./AuthContext";
 
 import App from "./App";
+import "./App.css";
 
 const root = document.getElementById("root") as HTMLElement;
 
