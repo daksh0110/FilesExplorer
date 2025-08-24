@@ -7,25 +7,7 @@ import styled from "styled-components";
 
 import NewLayout from "./NewLayout";
 import { useLocation } from "react-router-dom";
-
-const Background = styled.div`
-  /* background-color: #243642; */
-  height: 100vh;
-  padding: 0;
-  width: 100%;
-`;
-const Header = styled.div`
-  background-color: #6c48c5;
-  display: flex;
-  justify-content: space-between;
-  padding-left: 1rem;
-`;
-const OuterArea = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin-top: 1rem;
-  gap: 1rem;
-`;
+import PhotoBox from "./MediaBox";
 
 const LoginArea = styled.div`
   display: flex;
@@ -49,7 +31,6 @@ export default function GooglePhotos() {
   const location = useLocation();
   useEffect(() => {
     if (isLoggedIn && user) {
-      console.log(user);
       fetchData();
     }
     setCurrentPath(location.pathname);
@@ -63,24 +44,10 @@ export default function GooglePhotos() {
   return (
     <>
       {isLoggedIn && (
-        // <Layout>
-        //   <NavBar />
-        //   <Background>
-        //     <Header>
-        //       <GooglePhotosIcon />
-
-        //       <UserButton />
-        //     </Header>
-        //     <OuterArea>
-        //       {allMedia.map((media, index) => (
-        //         <PhotoBox media={media} />
-        //       ))}
-        //     </OuterArea>
-        //   </Background>
-        // </Layout>
-
         <NewLayout>
-          <div>My Content</div>
+          {allMedia?.map((media, index) => (
+            <PhotoBox media={media} />
+          ))}
         </NewLayout>
       )}
       {!isLoggedIn && (
