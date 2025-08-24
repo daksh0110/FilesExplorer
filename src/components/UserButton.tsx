@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { useAuth } from "../AuthContext";
 import { useState, useEffect, useRef } from "react";
 import { userProfile } from "./UserData";
+import { UserInfo } from "../types";
 
-// Styled components
 const DropdownContainer = styled.div`
   display: inline-block;
   position: relative;
@@ -34,7 +34,7 @@ const DropdownMenu = styled.div`
   overflow-y: auto; // Enable vertical scrolling if necessary
 `;
 
-const UserInfo = styled.div`
+const UserInfoBox = styled.div`
   display: flex;
   justify-content: center; // Center the image in the button
   font-size: xx-small;
@@ -46,12 +46,11 @@ const UserInfo = styled.div`
   }
 `;
 
-// Main component
 export default function UserButton() {
   const { isLoggedIn, user, login, logout } = useAuth();
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [menuVisible, setMenuVisible] = useState(false);
-  const dropdownRef = useRef(null); // Reference for dropdown
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Fetch user data
   useEffect(() => {
@@ -61,6 +60,7 @@ export default function UserButton() {
   }, [isLoggedIn, user]);
 
   async function fetchData() {
+    if (!user) return;
     setUserInfo((await userProfile(user)) || {});
   }
 
@@ -71,8 +71,11 @@ export default function UserButton() {
 
   // Close menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setMenuVisible(false);
       }
     };
@@ -86,19 +89,18 @@ export default function UserButton() {
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownButton onClick={toggleMenu}>
-        <UserInfo>
+        <UserInfoBox>
           <img
             src={userInfo?.picture}
             referrerPolicy="no-referrer"
             alt={userInfo?.name}
           />
-        </UserInfo>
+        </UserInfoBox>
       </DropdownButton>
       {menuVisible && (
         <DropdownMenu>
           <ul>
             <li onClick={logout}>Logout</li>
-            {/* Add more options here if needed */}
           </ul>
         </DropdownMenu>
       )}

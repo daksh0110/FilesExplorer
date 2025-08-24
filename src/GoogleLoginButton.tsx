@@ -3,7 +3,6 @@ import { useGoogleLogin } from "@react-oauth/google";
 export default function GoogleLoginButton() {
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      console.log(tokenResponse);
       localStorage.setItem("token", tokenResponse.access_token);
     },
   });

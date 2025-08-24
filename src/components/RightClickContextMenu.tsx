@@ -10,6 +10,7 @@ import "@szhsin/react-menu/dist/transitions/zoom.css";
 import { useAuth } from "../AuthContext";
 import { invoke } from "@tauri-apps/api/core";
 import { useNavigate } from "react-router-dom";
+import { RightClickContextMenuProps } from "../types";
 
 export default function RighClickContextMenu({
   anchorPoint,
@@ -19,7 +20,7 @@ export default function RighClickContextMenu({
   selectedType,
   entryPath,
   name,
-}) {
+}: RightClickContextMenuProps) {
   const navigate = useNavigate();
   const { FetchContent, handleDelete, ReadFile, CopyFile, Paste } = useAuth();
   async function handleCreate() {
@@ -49,7 +50,7 @@ export default function RighClickContextMenu({
     await FetchContent(path);
   }
 
-  async function handlePaste(path) {
+  async function handlePaste(path: string) {
     await Paste(path);
     FetchContent(path);
   }
@@ -64,7 +65,7 @@ export default function RighClickContextMenu({
           menuStyle={{}}
         >
           <MenuItem onClick={() => handleOpen()}>Open</MenuItem>
-          <MenuItem onClick={() => CopyFile(entryPath)}>Copy</MenuItem>
+          <MenuItem onClick={() => CopyFile(entryPath, name)}>Copy</MenuItem>
           <MenuItem onClick={handleDeleteAndRefresh}>Delete</MenuItem>
         </ControlledMenu>
       )}

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useAuth } from "../AuthContext";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Drive } from "../types";
 
 const DrivesGrid = styled.div`
   display: flex;
@@ -56,11 +57,12 @@ const ProgressBar = styled.progress`
     border-radius: 0;
   }
 `;
+
 export default function Drives() {
   const navigate = useNavigate();
-  const { drives } = useAuth();
+  const { drives } = useAuth() as { drives: Drive[] };
 
-  async function handleClick(path) {
+  async function handleClick(path: string) {
     console.log("This is the Drives path " + path);
 
     navigate("/" + path);
@@ -69,7 +71,7 @@ export default function Drives() {
     console.log(drives);
   }, [drives]);
 
-  function conversion(number) {
+  function conversion(number: number | string) {
     return Math.trunc(Number(number) / (1024 * 1024 * 1024));
   }
 

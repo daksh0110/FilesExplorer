@@ -12,7 +12,6 @@ import {
 } from "react-router-dom";
 import ContentPage from "./ContentPage";
 
-import { useAuth } from "./AuthContext";
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -38,7 +37,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<Home />} Route />
+          <Route path="/home" element={<Home />} />
 
           <Route path="/googlePhotos" element={<GooglePhotos />} />
           <Route path="/*" element={<ContentPage />} />

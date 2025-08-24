@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../AuthContext";
-import {
-  userProfile,
-  fetchAlbums,
-  fetchAllPhotos,
-} from "../components/UserData";
+import { fetchAlbums, fetchAllPhotos } from "./UserData";
 
 import styled from "styled-components";
 
@@ -59,6 +55,7 @@ export default function GooglePhotos() {
     setCurrentPath(location.pathname);
   }, [isLoggedIn, user]);
   async function fetchData() {
+    if (!user) return;
     setPhotosAlbum((await fetchAlbums(user)) || []);
     setAllMedia(await fetchAllPhotos(user));
   }
@@ -82,7 +79,9 @@ export default function GooglePhotos() {
         //   </Background>
         // </Layout>
 
-        <NewLayout></NewLayout>
+        <NewLayout>
+          <div>My Content</div>
+        </NewLayout>
       )}
       {!isLoggedIn && (
         <NewLayout>

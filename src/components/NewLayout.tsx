@@ -7,6 +7,7 @@ import GooglePhotosIcon from "../Icons/GooglePhotosIcon";
 import DrivesIcon from "../Icons/DrivesIcon";
 import HouseIcon from "../Icons/HouseIcon";
 import { useNavigate } from "react-router-dom";
+import { NewLayoutProps } from "../types";
 
 const Body = styled.div`
   margin: 0;
@@ -57,13 +58,13 @@ const SidebarMenuList = styled.div`
   flex-direction: column;
   gap: 18px;
 `;
-export default function NewLayout({ children }) {
+export default function NewLayout({ children }: NewLayoutProps) {
   const { currentPath, setCurrentPath, drives, shortcuts } = useAuth();
 
   const navigate = useNavigate();
-  function handleKeyPress(event) {
+  function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
-      navigate(event.target.value);
+      navigate((event.target as HTMLInputElement).value);
     }
   }
 

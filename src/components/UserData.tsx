@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export async function userProfile(user) {
+export async function userProfile(user: string) {
   try {
     const res = await axios.get(
       "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -15,7 +15,7 @@ export async function userProfile(user) {
   } catch (error) {}
 }
 
-export async function fetchAlbums(user) {
+export async function fetchAlbums(user: string) {
   try {
     const res = await axios.get(
       "https://photoslibrary.googleapis.com/v1/albums",
@@ -31,7 +31,7 @@ export async function fetchAlbums(user) {
     console.error("Error fetching albums:", error);
   }
 }
-export async function fetchAllPhotos(user) {
+export async function fetchAllPhotos(user: string) {
   let nextPageToken = null;
   try {
     const res = await axios.get(
