@@ -8,6 +8,7 @@ import DrivesIcon from "../Icons/DrivesIcon";
 import HouseIcon from "../Icons/HouseIcon";
 import { useNavigate } from "react-router-dom";
 import { NewLayoutProps } from "../types";
+import TopBar from "./TopBar/TopBar";
 
 const Body = styled.div`
   margin: 0;
@@ -68,45 +69,46 @@ export default function NewLayout({ children }: NewLayoutProps) {
     }
   }
 
-  return (
-    <>
-      <Body>
-        <Header>
-          <HeaderContent>
-            <BackButton />
-            <ForwardButton />
-            <Input
-              value={currentPath}
-              onChange={(e) => setCurrentPath(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-          </HeaderContent>
-        </Header>
-        <Sidebar>
-          <SidebarMenuList>
-            <SideBarMenu
-              name="Web"
-              subMenu={[
-                {
-                  name: "Google Photos",
-                  mount_point: "/googlePhotos",
-                  icon: <GooglePhotosIcon />,
-                },
-              ]}
-            />
-            <SideBarMenu name="Disks" subMenu={drives} icon={<DrivesIcon />} />
+  // return (
+  //   <>
+  //     <Body>
+  //       <Header>
+  //         <HeaderContent>
+  //           <BackButton />
+  //           <ForwardButton />
+  //           <Input
+  //             value={currentPath}
+  //             onChange={(e) => setCurrentPath(e.target.value)}
+  //             onKeyDown={handleKeyPress}
+  //           />
+  //         </HeaderContent>
+  //       </Header>
+  //       <Sidebar>
+  //         <SidebarMenuList>
+  //           <SideBarMenu
+  //             name="Web"
+  //             subMenu={[
+  //               {
+  //                 name: "Google Photos",
+  //                 mount_point: "/googlePhotos",
+  //                 icon: <GooglePhotosIcon />,
+  //               },
+  //             ]}
+  //           />
+  //           <SideBarMenu name="Disks" subMenu={drives} icon={<DrivesIcon />} />
 
-            <SideBarMenu
-              name="Shortcuts"
-              subMenu={[
-                { name: "Home", mount_point: "/home", icon: <HouseIcon /> },
-                ...shortcuts,
-              ]}
-            />
-          </SidebarMenuList>
-        </Sidebar>
-        <ContentArea>{children}</ContentArea>
-      </Body>
-    </>
-  );
+  //           <SideBarMenu
+  //             name="Shortcuts"
+  //             subMenu={[
+  //               { name: "Home", mount_point: "/home", icon: <HouseIcon /> },
+  //               ...shortcuts,
+  //             ]}
+  //           />
+  //         </SidebarMenuList>
+  //       </Sidebar>
+  //       <ContentArea>{children}</ContentArea>
+  //     </Body>
+  //   </>
+  // );
+  return <TopBar />;
 }
