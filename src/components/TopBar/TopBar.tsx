@@ -5,19 +5,19 @@ import NavSearch from "../NavBarSearch/NavSearch";
 
 export default function TopBar() {
   return (
-    <div className="bg-white h-16 flex px-4 shadow items-center">
-      <div className="flex gap-6 text-gray-800 pl-2 items-center">
+    <div className="bg-gray-50 h-16 flex px-4 shadow-sm items-center border-b border-gray-200">
+      <div className="flex gap-6 text-gray-700 pl-2 items-center">
         <IoMdArrowBack
           size={30}
-          className="hover:bg-gray-50 p-1 cursor-pointer rounded-lg"
+          className="hover:bg-gray-100 p-1 cursor-pointer rounded-lg"
         />
         <IoMdArrowForward
           size={30}
-          className="hover:bg-gray-50 p-1 cursor-pointer rounded-lg"
+          className="hover:bg-gray-100 p-1 cursor-pointer rounded-lg"
         />
         <VscDebugRestart
           size={30}
-          className="hover:bg-gray-50 p-1 cursor-pointer rounded-lg"
+          className="hover:bg-gray-100 p-1 cursor-pointer rounded-lg"
         />
       </div>
 
