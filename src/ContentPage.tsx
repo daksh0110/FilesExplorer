@@ -1,46 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import NewLayout from "./components/NewLayout";
 import RighClickContextMenu from "./components/RightClickContextMenu";
 import { useAuth } from "./AuthContext";
-
-const FilePaneContainer = styled.div`
-  padding: 16px;
-  overflow: hidden;
-  border-radius: 8px;
-  height: 100%;
-  overflow-y: auto;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const TableHeader = styled.th`
-  color: black;
-  padding: 10px;
-  text-align: left;
-  border: 2px solid #ddd;
-`;
-
-const TableRow = styled.tr`
-  &:hover {
-    background-color: #f5f5f5;
-  }
-`;
-
-const TableData = styled.td`
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  cursor: pointer;
-  user-select: none;
-`;
-
-const FileIcon = styled.span`
-  margin-right: 10px;
-`;
 
 export default function ContentPage() {
   const { "*": path } = useParams();
@@ -49,31 +10,36 @@ export default function ContentPage() {
 
   const [isOpen, setOpen] = useState(false);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
-  const [selectedType, setSelectedType] = useState(null);
-  const [entryPath, setEntryPath] = useState(null);
-  const [entryname, setEntryName] = useState(null);
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [entryPath, setEntryPath] = useState<string | null>(null);
+  const [entryname, setEntryName] = useState<string | null>(null);
 
   useEffect(() => {
     FetchContent(path || "");
+    console.log(content);
   }, [path]);
 
-  const handleClick = (path: string, file_type: string) => {
+  const handleClick = (p: string, file_type: string) => {
     if (file_type === "Directory") {
-      const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
+      const cleanedPath = p.startsWith("/") ? p.slice(1) : p;
       navigate("/" + cleanedPath);
     } else {
-      ReadFile(path);
+      ReadFile(p);
     }
   };
 
-  const handleContextMenu = (e, type, entrypath, name) => {
+  const handleContextMenu = (
+    e: React.MouseEvent,
+    type: string,
+    entrypath?: string,
+    name?: string
+  ) => {
     e.preventDefault();
     e.stopPropagation();
     setAnchorPoint({ x: e.clientX, y: e.clientY });
     setSelectedType(type);
-    setEntryPath(entrypath);
-    setEntryName(name);
-    console.log(entrypath);
+    setEntryPath(entrypath || null);
+    setEntryName(name || null);
     setTimeout(() => setOpen(true), 10);
   };
 
@@ -88,28 +54,35 @@ export default function ContentPage() {
         entryPath={entryPath}
         entryName={entryname}
       />
-      <FilePaneContainer
+
+      {/* IMPORTANT: this container must be flex-1 + min-h-0 and NOT overflow itself */}
+      <div
+        className="flex-1 min-h-0 flex flex-col"
         onContextMenu={(e) => {
           e.preventDefault();
-          if (!isOpen) {
-            handleContextMenu(e, "empty-space");
-          }
+          if (!isOpen) handleContextMenu(e, "empty-space");
         }}
       >
-        <Table>
-          <thead>
-            <tr>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>Type</TableHeader>
-              <TableHeader>Size</TableHeader>
-              <TableHeader>Date Modified</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {content.map((entry, index) => (
-              <TableRow key={index}>
-                <TableData
-                  onDoubleClick={() => handleClick(entry.path, entry.file_type)}
+        {/* Optional: header row for toolbars / breadcrumbs inside the card 
+            Keep it flex-none so it doesn't try to scroll */}
+        {/* <div className="flex-none px-4 py-2 border-b bg-white">...</div> */}
+
+        {/* The ONLY scrollable area */}
+        <div className="flex-1 min-h-0 overflow-auto overscroll-contain rounded-md border border-gray-200">
+          <table className="min-w-full table-fixed text-sm text-left">
+            <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider sticky top-0 z-10">
+              <tr>
+                <th className="px-4 py-3 border-b w-1/2">Name</th>
+                <th className="px-4 py-3 border-b w-1/6">Type</th>
+                <th className="px-4 py-3 border-b w-1/6">Size</th>
+                <th className="px-4 py-3 border-b w-1/6">Date Modified</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {content.map((entry, index) => (
+                <tr
+                  key={index}
+                  className="hover:bg-gray-50 cursor-pointer"
                   onContextMenu={(e) =>
                     handleContextMenu(
                       e,
@@ -119,19 +92,37 @@ export default function ContentPage() {
                     )
                   }
                 >
-                  {entry.file_type === "Directory" ? (
-                    <FileIcon>📁</FileIcon>
-                  ) : (
-                    <FileIcon>📄</FileIcon>
-                  )}{" "}
-                  {entry.name}
-                </TableData>
-                <TableData>{entry.file_type}</TableData>
-              </TableRow>
-            ))}
-          </tbody>
-        </Table>
-      </FilePaneContainer>
+                  <td
+                    className="px-4 py-2 font-medium text-gray-800"
+                    onDoubleClick={() =>
+                      handleClick(entry.path, entry.file_type)
+                    }
+                  >
+                    <div className="flex items-center gap-2">
+                      {entry.file_type === "Directory" ? (
+                        <span className="text-yellow-500">📁</span>
+                      ) : (
+                        <span className="text-blue-500">📄</span>
+                      )}
+                      {/* Truncate long names without blowing layout */}
+                      <span className="block truncate">{entry.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
+                    {entry.file_type}
+                  </td>
+                  <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
+                    {entry.size || "--"}
+                  </td>
+                  <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
+                    {entry.modified || "--"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </>
   );
 }
