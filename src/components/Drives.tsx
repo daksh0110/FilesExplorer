@@ -1,102 +1,72 @@
-import styled from "styled-components";
 import { useAuth } from "../AuthContext";
-import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Drive } from "../types";
-
-const DrivesGrid = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 2rem;
-  height: fit-content;
-  width: fit-content;
-`;
-const EachDrive = styled.div`
-  padding: 5px;
-  width: max-content;
-
-  cursor: pointer;
-  &:hover,
-  &focus {
-    border: dotted;
-  }
-  &:active {
-    background-color: lightblue;
-  }
-`;
-const DrivesHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-`;
-const DrivesHeading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid lightgray;
-  width: 50%;
-  margin: 0 auto;
-  padding-bottom: 4px;
-  font-size: large;
-  letter-spacing: 2px;
-`;
-const ProgressBar = styled.progress`
-  height: 20px;
-  border-radius: 0;
-  &::-webkit-progress-bar {
-    background-color: #e0e0e0;
-    border-radius: 0;
-  }
-  &::-webkit-progress-value {
-    background-color: #1c64f2;
-    border-radius: 0;
-  }
-  &::-moz-progress-bar {
-    background-color: #1c64f2;
-    border-radius: 0;
-  }
-`;
 
 export default function Drives() {
   const navigate = useNavigate();
   const { drives } = useAuth() as { drives: Drive[] };
 
-  async function handleClick(path: string) {
-    console.log("This is the Drives path " + path);
-
+  function handleClick(path: string) {
     navigate("/" + path);
   }
 
-  function conversion(number: number | string) {
-    return Math.trunc(Number(number) / (1024 * 1024 * 1024));
+  // Format storage nicely
+  function formatSize(bytes: number): string {
+    const gb = bytes / (1024 * 1024 * 1024);
+    if (gb >= 1) return `${Math.trunc(gb)} GB`;
+    const mb = bytes / (1024 * 1024);
+    return `${Math.trunc(mb)} MB`;
   }
 
   return (
-    <DrivesHeader>
-      <DrivesHeading> All Drives</DrivesHeading>
+    <div className="flex flex-col gap-8">
+      {/* Heading */}
+      <h2 className="text-2xl font-semibold text-center border-b border-gray-300 w-1/2 mx-auto pb-2 tracking-wide">
+        All Drives
+      </h2>
 
-      <DrivesGrid>
-        {drives.map((drive, index) => (
-          <EachDrive key={index} onClick={() => handleClick(drive.mount_point)}>
-            <h5>
-              {drive.name} ({drive.disk_type})
-            </h5>
-            <h5>{drive.mount_point}</h5>
-            <ProgressBar
-              value={
-                conversion(drive.total_space) -
-                conversion(drive.available_space)
-              }
-              max={Number(drive.total_space) / (1024 * 1024 * 1024)}
-            />
-            <h5>
-              {conversion(drive.available_space)} GB free of{" "}
-              {conversion(drive.total_space)} GB
-            </h5>
-          </EachDrive>
-        ))}
-      </DrivesGrid>
-    </DrivesHeader>
+      {/* Drives Grid */}
+      <div className="flex flex-wrap gap-6 justify-center">
+        {drives.map((drive, index) => {
+          const used =
+            Number(drive.total_space) - Number(drive.available_space);
+
+          return (
+            <div
+              key={index}
+              onClick={() => handleClick(drive.mount_point)}
+              className="p-5 w-72 rounded-2xl shadow-md bg-white border hover:shadow-lg hover:border-blue-500 cursor-pointer transition-all"
+            >
+              {/* Drive Header */}
+              <div className="flex flex-col gap-1 mb-3">
+                <h3 className="text-lg font-medium text-gray-800">
+                  {drive.name}{" "}
+                  <span className="text-sm text-gray-500">
+                    ({drive.disk_type})
+                  </span>
+                </h3>
+                <p className="text-sm text-gray-500">{drive.mount_point}</p>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="relative w-full h-3 bg-gray-200 rounded-lg overflow-hidden mb-2">
+                <div
+                  className="h-full bg-blue-500"
+                  style={{
+                    width: `${(used / Number(drive.total_space)) * 100}%`,
+                  }}
+                ></div>
+              </div>
+
+              {/* Storage Info */}
+              <p className="text-sm text-gray-700">
+                {formatSize(Number(drive.available_space))} free of{" "}
+                {formatSize(Number(drive.total_space))}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

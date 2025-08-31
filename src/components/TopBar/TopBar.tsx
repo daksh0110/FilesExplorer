@@ -52,7 +52,7 @@ export default function TopBar() {
       </div>
 
       <div className="ml-4 w-[55%]">
-        <BreadCrumb path={path} />
+        <BreadCrumb />
       </div>
 
       <div className="flex-1 px-4">

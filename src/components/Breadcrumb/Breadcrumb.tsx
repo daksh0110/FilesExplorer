@@ -1,18 +1,21 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
 
-export default function BreadCrumb({ path = [] }: { path: string[] }) {
-  const [editing, setEditing] = useState(false);
-  const [inputValue, setInputValue] = useState("/" + path.join("/"));
+export default function BreadCrumb() {
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const segments = location.pathname.split("/").filter(Boolean);
+
+  const [editing, setEditing] = useState(false);
+  const [inputValue, setInputValue] = useState(location.pathname);
 
   useEffect(() => {
     if (!editing) {
-      const newValue = "/" + path.filter(Boolean).join("/");
-      setInputValue(newValue || "/");
+      setInputValue(location.pathname || "/");
     }
-  }, [path, editing]);
+  }, [location.pathname, editing]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -27,8 +30,7 @@ export default function BreadCrumb({ path = [] }: { path: string[] }) {
       navigate(normalized);
     } else if (e.key === "Escape") {
       setEditing(false);
-      const restored = "/" + path.filter(Boolean).join("/");
-      setInputValue(restored || "/");
+      setInputValue(location.pathname || "/");
     }
   };
 
@@ -47,9 +49,9 @@ export default function BreadCrumb({ path = [] }: { path: string[] }) {
     >
       {!editing ? (
         <ol className="flex items-center space-x-2 text-gray-800 text-lg font-medium w-full">
-          {path.filter(Boolean).map((segment, idx) => {
-            const isLast = idx === path.filter(Boolean).length - 1;
-            const fullPath = "/" + path.slice(0, idx + 1).join("/");
+          {segments.map((segment, idx) => {
+            const isLast = idx === segments.length - 1;
+            const fullPath = "/" + segments.slice(0, idx + 1).join("/");
 
             return (
               <li key={idx} className="flex items-center">
