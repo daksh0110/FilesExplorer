@@ -54,10 +54,10 @@ export default function ContentPage() {
   const [entryname, setEntryName] = useState(null);
 
   useEffect(() => {
-    FetchContent(path);
+    FetchContent(path || "");
   }, [path]);
 
-  const handleClick = (path, file_type) => {
+  const handleClick = (path: string, file_type: string) => {
     if (file_type === "Directory") {
       const cleanedPath = path.startsWith("/") ? path.slice(1) : path;
       navigate("/" + cleanedPath);
@@ -79,63 +79,59 @@ export default function ContentPage() {
 
   return (
     <>
-      <NewLayout>
-        <RighClickContextMenu
-          anchorPoint={anchorPoint}
-          isOpen={isOpen}
-          setOpen={setOpen}
-          path={path}
-          selectedType={selectedType}
-          entryPath={entryPath}
-          entryName={entryname}
-        />
-        <FilePaneContainer
-          onContextMenu={(e) => {
-            e.preventDefault();
-            if (!isOpen) {
-              handleContextMenu(e, "empty-space");
-            }
-          }}
-        >
-          <Table>
-            <thead>
-              <tr>
-                <TableHeader>Name</TableHeader>
-                <TableHeader>Type</TableHeader>
-                <TableHeader>Size</TableHeader>
-                <TableHeader>Date Modified</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {content.map((entry, index) => (
-                <TableRow key={index}>
-                  <TableData
-                    onDoubleClick={() =>
-                      handleClick(entry.path, entry.file_type)
-                    }
-                    onContextMenu={(e) =>
-                      handleContextMenu(
-                        e,
-                        entry.file_type === "Directory" ? "directory" : "file",
-                        entry.path,
-                        entry.name
-                      )
-                    }
-                  >
-                    {entry.file_type === "Directory" ? (
-                      <FileIcon>📁</FileIcon>
-                    ) : (
-                      <FileIcon>📄</FileIcon>
-                    )}{" "}
-                    {entry.name}
-                  </TableData>
-                  <TableData>{entry.file_type}</TableData>
-                </TableRow>
-              ))}
-            </tbody>
-          </Table>
-        </FilePaneContainer>
-      </NewLayout>
+      <RighClickContextMenu
+        anchorPoint={anchorPoint}
+        isOpen={isOpen}
+        setOpen={setOpen}
+        path={path}
+        selectedType={selectedType}
+        entryPath={entryPath}
+        entryName={entryname}
+      />
+      <FilePaneContainer
+        onContextMenu={(e) => {
+          e.preventDefault();
+          if (!isOpen) {
+            handleContextMenu(e, "empty-space");
+          }
+        }}
+      >
+        <Table>
+          <thead>
+            <tr>
+              <TableHeader>Name</TableHeader>
+              <TableHeader>Type</TableHeader>
+              <TableHeader>Size</TableHeader>
+              <TableHeader>Date Modified</TableHeader>
+            </tr>
+          </thead>
+          <tbody>
+            {content.map((entry, index) => (
+              <TableRow key={index}>
+                <TableData
+                  onDoubleClick={() => handleClick(entry.path, entry.file_type)}
+                  onContextMenu={(e) =>
+                    handleContextMenu(
+                      e,
+                      entry.file_type === "Directory" ? "directory" : "file",
+                      entry.path,
+                      entry.name
+                    )
+                  }
+                >
+                  {entry.file_type === "Directory" ? (
+                    <FileIcon>📁</FileIcon>
+                  ) : (
+                    <FileIcon>📄</FileIcon>
+                  )}{" "}
+                  {entry.name}
+                </TableData>
+                <TableData>{entry.file_type}</TableData>
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
+      </FilePaneContainer>
     </>
   );
 }

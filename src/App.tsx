@@ -10,13 +10,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import ContentPage from "./ContentPage";
+import Layout from "./Layout";
 
 const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
 
   body {
     background-color: white; /* Set the background color */
@@ -28,21 +24,19 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
   return (
-    <div>
-      <Router>
-        <div>
-          <GlobalStyle />
-        </div>
+    <Router>
+      <GlobalStyle />
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" replace />} />
 
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+        {/* Layout route */}
+        <Route element={<Layout />}>
           <Route path="/home" element={<Home />} />
-
           <Route path="/googlePhotos" element={<GooglePhotos />} />
           <Route path="/*" element={<ContentPage />} />
-        </Routes>
-      </Router>
-    </div>
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

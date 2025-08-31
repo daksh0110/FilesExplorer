@@ -2,8 +2,8 @@ use sysinfo::Disks;
 
 use serde::Serialize;
 
-#[derive(Debug,Serialize)]
-pub struct DiskInfo{
+#[derive(Debug, Serialize)]
+pub struct DiskInfo {
     name: String,
     mount_point: String,
     available_space: u64,
@@ -11,7 +11,7 @@ pub struct DiskInfo{
     disk_type: String,
 }
 #[allow(dead_code)]
-pub fn get_disk_info() ->Vec<DiskInfo> {
+pub fn get_disk_info() -> Vec<DiskInfo> {
     let disks = Disks::new_with_refreshed_list();
     let mut disk_list: Vec<DiskInfo> = Vec::new();
     for disk in disks.list() {
@@ -23,7 +23,6 @@ pub fn get_disk_info() ->Vec<DiskInfo> {
             disk_type: disk.kind().to_string(),
         };
 
-    
         disk_list.push(disk_info);
     }
     disk_list
