@@ -26,7 +26,11 @@ interface Shortcut {
 interface FileItem {
   name: string;
   path: string;
-  type: string;
+  file_type: string;
+  accessed: number;
+  created: number;
+  size: string;
+  modified: string;
 }
 
 interface AuthContextType {
