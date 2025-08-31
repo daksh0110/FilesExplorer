@@ -75,3 +75,13 @@ export interface GoogleMediaItem {
   mimeType: string;
   filename: string;
 }
+
+export interface UserDirectory {
+  name: string;
+  mount_point: string | null;
+}
+
+export interface SidebarData {
+  drives: Drive[];
+  shortcuts: UserDirectory[];
+}

@@ -10,6 +10,7 @@ mod disk_info;
 mod paste;
 mod read;
 mod readfile;
+mod sidebar;
 mod sidebarshortcuts;
 
 use crate::disk_info::DiskInfo;
@@ -18,6 +19,7 @@ use copy::copy as copy_impl;
 use delete::delete as delete_file;
 use paste::paste as paste_impl;
 use readfile::readfile as read_file_impl;
+use sidebar::fetch_sidebar_data;
 use sidebarshortcuts::UserDirectory;
 
 #[tauri::command]
@@ -75,7 +77,8 @@ pub fn run() {
             delete,
             readfile,
             copy,
-            paste
+            paste,
+            fetch_sidebar_data
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

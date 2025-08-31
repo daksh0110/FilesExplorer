@@ -67,9 +67,6 @@ export default function Drives() {
 
     navigate("/" + path);
   }
-  useEffect(() => {
-    console.log(drives);
-  }, [drives]);
 
   function conversion(number: number | string) {
     return Math.trunc(Number(number) / (1024 * 1024 * 1024));

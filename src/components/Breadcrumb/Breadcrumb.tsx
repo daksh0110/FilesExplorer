@@ -1,23 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
-export default function BreadCrumb({
-  path = [],
-  onNavigate,
-}: {
-  path: string[];
-  onNavigate?: (fullPath: string) => void;
-}) {
+export default function BreadCrumb({ path = [] }: { path: string[] }) {
   const [editing, setEditing] = useState(false);
-  const [inputValue, setInputValue] = useState(path.join("/"));
+  const [inputValue, setInputValue] = useState("/" + path.join("/"));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!editing) {
+      const newValue = "/" + path.filter(Boolean).join("/");
+      setInputValue(newValue || "/");
+    }
+  }, [path, editing]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setEditing(false);
-      onNavigate?.(inputValue);
+      let normalized = inputValue.trim();
+
+      if (!normalized.startsWith("/")) {
+        normalized = "/" + normalized;
+      }
+      normalized = normalized.replace(/\/+/g, "/");
+
+      navigate(normalized);
     } else if (e.key === "Escape") {
       setEditing(false);
-      setInputValue(path.join("/")); // reset
+      const restored = "/" + path.filter(Boolean).join("/");
+      setInputValue(restored || "/");
     }
   };
 
@@ -35,9 +46,11 @@ export default function BreadCrumb({
       }}
     >
       {!editing ? (
-        <ol className="flex items-center space-x-2 text-gray-800 text-lg font-medium w-full focus:ring-2 focus:ring-blue-400">
-          {path.map((segment, idx) => {
-            const isLast = idx === path.length - 1;
+        <ol className="flex items-center space-x-2 text-gray-800 text-lg font-medium w-full">
+          {path.filter(Boolean).map((segment, idx) => {
+            const isLast = idx === path.filter(Boolean).length - 1;
+            const fullPath = "/" + path.slice(0, idx + 1).join("/");
+
             return (
               <li key={idx} className="flex items-center">
                 {!isLast ? (
@@ -46,8 +59,7 @@ export default function BreadCrumb({
                     className="hover:text-blue-600 cursor-pointer flex items-center"
                     onClick={(e) => {
                       e.preventDefault();
-                      const fullPath = path.slice(0, idx + 1).join("/");
-                      onNavigate?.(fullPath);
+                      navigate(fullPath);
                     }}
                   >
                     {segment}
@@ -65,7 +77,7 @@ export default function BreadCrumb({
       ) : (
         <input
           type="text"
-          className="w-full border-none outline-none text-gray-800 text-lg bg-transparent "
+          className="w-full border-none outline-none text-gray-800 text-lg bg-transparent"
           autoFocus
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
