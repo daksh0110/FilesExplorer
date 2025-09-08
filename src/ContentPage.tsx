@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import RighClickContextMenu from "./components/RightClickContextMenu";
 import { useAuth } from "./AuthContext";
+import FileRow from "./components/FileRow/FileRow";
 
 export default function ContentPage() {
   const { "*": path } = useParams();
@@ -80,44 +81,12 @@ export default function ContentPage() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {content.map((entry, index) => (
-                <tr
+                <FileRow
                   key={index}
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onContextMenu={(e) =>
-                    handleContextMenu(
-                      e,
-                      entry.file_type === "Directory" ? "directory" : "file",
-                      entry.path,
-                      entry.name
-                    )
-                  }
-                >
-                  <td
-                    className="px-4 py-2 font-medium text-gray-800"
-                    onDoubleClick={() =>
-                      handleClick(entry.path, entry.file_type)
-                    }
-                  >
-                    <div className="flex items-center gap-2">
-                      {entry.file_type === "Directory" ? (
-                        <span className="text-yellow-500">📁</span>
-                      ) : (
-                        <span className="text-blue-500">📄</span>
-                      )}
-                      {/* Truncate long names without blowing layout */}
-                      <span className="block truncate">{entry.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
-                    {entry.file_type}
-                  </td>
-                  <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
-                    {entry.size || "--"}
-                  </td>
-                  <td className="px-4 py-2 text-gray-600 whitespace-nowrap">
-                    {entry.modified || "--"}
-                  </td>
-                </tr>
+                  entry={entry}
+                  onDoubleClick={handleClick}
+                  onContextMenu={handleContextMenu}
+                />
               ))}
             </tbody>
           </table>
