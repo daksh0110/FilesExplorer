@@ -31,6 +31,7 @@ interface FileItem {
   created: number;
   size: string;
   modified: string;
+  extension: string;
 }
 
 interface AuthContextType {

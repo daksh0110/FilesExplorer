@@ -10,10 +10,11 @@ pub struct EntryInfo {
     path: String,
     file_type: String,
     current_directory: String,
-    size: String,     // formatted like "12.3 MB"
-    modified: String, // formatted like "2025-08-31 14:37:22"
+    size: String,
+    modified: String,
     accessed: String,
     created: String,
+    extension: String,
 }
 
 pub fn read(path: String) -> Vec<EntryInfo> {
@@ -30,16 +31,33 @@ pub fn read(path: String) -> Vec<EntryInfo> {
             for entry_result in dir_entries {
                 if let Ok(entry) = entry_result {
                     let path = entry.path();
-                    let name = entry
-                        .file_name()
-                        .into_string()
-                        .unwrap_or_else(|_| "Unknown".to_string());
+
+                    // Extract extension
+                    let extension = path
+                        .extension()
+                        .and_then(|ext| ext.to_str())
+                        .unwrap_or("")
+                        .to_string();
+
+                    // Extract base name without extension
+                    let name = path
+                        .file_stem()
+                        .and_then(|stem| stem.to_str())
+                        .unwrap_or("Unknown")
+                        .to_string();
+
                     let path_string = path.to_string_lossy().to_string();
 
                     // File type
                     let file_type_string = match entry.file_type() {
                         Ok(ft) if ft.is_dir() => "Directory".to_string(),
-                        Ok(ft) if ft.is_file() => "File".to_string(),
+                        Ok(ft) if ft.is_file() => {
+                            if extension.is_empty() {
+                                "File".to_string()
+                            } else {
+                                extension.clone()
+                            }
+                        }
                         Ok(ft) if ft.is_symlink() => "Symlink".to_string(),
                         _ => "Unknown".to_string(),
                     };
@@ -63,6 +81,7 @@ pub fn read(path: String) -> Vec<EntryInfo> {
                         modified: modified_str,
                         accessed: accessed_str,
                         created: created_str,
+                        extension,
                     });
                 }
             }
