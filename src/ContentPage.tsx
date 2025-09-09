@@ -17,7 +17,6 @@ export default function ContentPage() {
 
   useEffect(() => {
     FetchContent(path || "");
-    console.log(content);
   }, [path]);
 
   const handleClick = (p: string, file_type: string) => {
@@ -56,7 +55,6 @@ export default function ContentPage() {
         entryName={entryname}
       />
 
-      {/* IMPORTANT: this container must be flex-1 + min-h-0 and NOT overflow itself */}
       <div
         className="flex-1 min-h-0 flex flex-col"
         onContextMenu={(e) => {
@@ -64,16 +62,19 @@ export default function ContentPage() {
           if (!isOpen) handleContextMenu(e, "empty-space");
         }}
       >
-        {/* Optional: header row for toolbars / breadcrumbs inside the card 
-            Keep it flex-none so it doesn't try to scroll */}
-        {/* <div className="flex-none px-4 py-2 border-b bg-white">...</div> */}
-
-        {/* The ONLY scrollable area */}
-        <div className="flex-1 min-h-0 overflow-auto overscroll-contain rounded-md border border-gray-200">
-          <table className="min-w-full table-fixed text-sm text-left">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider sticky top-0 z-10">
+        <div
+          className="flex-1 h-full overflow-auto overscroll-contain rounded-md border border-gray-200"
+          style={{ transform: "translateZ(0)" }}
+        >
+          <table className="min-w-full table-fixed border-collapse text-sm text-left">
+            <thead
+              className="sticky top-0 z-10"
+              style={{ backgroundColor: "#f3f4f6", willChange: "transform" }}
+            >
               <tr>
-                <th className="px-4 py-3 border-b w-1/2">Name</th>
+                <th className="px-4 py-2 max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis border-b">
+                  Name
+                </th>
                 <th className="px-4 py-3 border-b w-1/6">Type</th>
                 <th className="px-4 py-3 border-b w-1/6">Size</th>
                 <th className="px-4 py-3 border-b w-1/6">Date Modified</th>

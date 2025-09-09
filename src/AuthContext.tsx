@@ -23,7 +23,7 @@ interface Shortcut {
   icon: React.ReactNode;
 }
 
-interface FileItem {
+export interface FileItem {
   name: string;
   path: string;
   file_type: string;
@@ -52,6 +52,9 @@ interface AuthContextType {
   handleDelete: (path: string, selectedType: string | null) => Promise<void>;
   selectedType: string | null;
   setSelectedtype: (type: string | null) => void;
+  setContent: (
+    content: FileItem[] | ((prev: FileItem[]) => FileItem[])
+  ) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -180,6 +183,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         Paste,
         handleDelete,
         selectedType,
+        setContent,
         setSelectedtype,
       }}
     >

@@ -6,14 +6,16 @@ export default function BreadCrumb() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const segments = location.pathname.split("/").filter(Boolean);
+  const rawSegments = location.pathname.split("/").filter(Boolean);
+  const segments = rawSegments.map((seg) => decodeURIComponent(seg));
 
   const [editing, setEditing] = useState(false);
   const [inputValue, setInputValue] = useState(location.pathname);
 
   useEffect(() => {
     if (!editing) {
-      setInputValue(location.pathname || "/");
+      // set decoded path in input when not editing
+      setInputValue(decodeURIComponent(location.pathname) || "/");
     }
   }, [location.pathname, editing]);
 
@@ -27,7 +29,12 @@ export default function BreadCrumb() {
       }
       normalized = normalized.replace(/\/+/g, "/");
 
-      navigate(normalized);
+      const encoded = normalized
+        .split("/")
+        .map((seg) => encodeURIComponent(seg))
+        .join("/");
+
+      navigate(encoded);
     } else if (e.key === "Escape") {
       setEditing(false);
       setInputValue(location.pathname || "/");
@@ -51,7 +58,7 @@ export default function BreadCrumb() {
         <ol className="flex items-center space-x-2 text-gray-800 text-lg font-medium w-full">
           {segments.map((segment, idx) => {
             const isLast = idx === segments.length - 1;
-            const fullPath = "/" + segments.slice(0, idx + 1).join("/");
+            const fullPath = "/" + rawSegments.slice(0, idx + 1).join("/");
 
             return (
               <li key={idx} className="flex items-center">

@@ -10,18 +10,20 @@ mod disk_info;
 mod paste;
 mod read;
 mod readfile;
+mod search;
 mod sidebar;
 mod sidebarshortcuts;
 
 use crate::disk_info::DiskInfo;
 use crate::read::EntryInfo;
+use crate::search::search_files_stream;
 use copy::copy as copy_impl;
 use delete::delete as delete_file;
 use paste::paste as paste_impl;
 use readfile::readfile as read_file_impl;
+
 use sidebar::fetch_sidebar_data;
 use sidebarshortcuts::UserDirectory;
-
 #[tauri::command]
 fn fetch_logical_drives() -> Vec<DiskInfo> {
     let drives = disk_info::get_disk_info();
@@ -65,6 +67,17 @@ fn paste(path: String) -> Result<(), String> {
     paste_impl(&path)
 }
 
+#[tauri::command]
+async fn search_command(
+    window: tauri::Window,
+    path: String,
+    query: String,
+    offset: usize,
+    limit: usize,
+) {
+    search_files_stream(window, path, query).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -78,7 +91,8 @@ pub fn run() {
             readfile,
             copy,
             paste,
-            fetch_sidebar_data
+            fetch_sidebar_data,
+            search_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
