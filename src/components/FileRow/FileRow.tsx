@@ -1,7 +1,7 @@
 import React from "react";
 import { FileIcon, defaultStyles } from "react-file-icon";
 
-interface Entry {
+export interface Entry {
   name: string;
   path: string;
   file_type: string;

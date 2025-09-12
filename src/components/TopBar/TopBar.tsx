@@ -56,7 +56,7 @@ export default function TopBar() {
       </div>
 
       <div className="flex-1 px-4">
-        <NavSearch onSearch={(q) => console.log("Searching:", q)} />
+        <NavSearch />
       </div>
     </div>
   );
