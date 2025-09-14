@@ -1,14 +1,15 @@
 import { IoMdSearch } from "react-icons/io";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { useAuth } from "../../AuthContext";
-import { Entry } from "../FileRow/FileRow";
+import { FileItem, useAuth } from "../../AuthContext";
 
 export default function NavSearch() {
   const { currentPath, FetchContent, setCurrentPath, setContent } = useAuth();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const limit = 100;
 
   // Listen for streamed results
   useEffect(() => {
@@ -18,17 +19,7 @@ export default function NavSearch() {
     async function setupListeners() {
       unlistenResult = await listen("search://result", (event) => {
         const r: any = event.payload;
-        setContent((prev: Entry[]) => [
-          ...prev,
-          {
-            name: r.name,
-            path: r.path,
-            file_type: r.file_type,
-            size: "",
-            modified: "",
-            extension: r.name.split(".").pop() || "",
-          },
-        ]);
+        setContent((prev: FileItem[]) => [...prev, r]);
       });
 
       unlistenDone = await listen("search://done", () => {
@@ -44,50 +35,72 @@ export default function NavSearch() {
     };
   }, [setContent]);
 
-  // Trigger search
+  const fetchSearch = useCallback(
+    async (q: string, newOffset: number) => {
+      try {
+        setLoading(true);
+        await invoke("search_command", {
+          path: currentPath,
+          query: q,
+          offset: newOffset,
+          limit,
+        });
+        setCurrentPath(currentPath);
+      } catch (err) {
+        console.error("Error searching files:", err);
+        setLoading(false);
+      }
+    },
+    [currentPath, limit, setCurrentPath]
+  );
+
   const handleSearch = async (value: string) => {
     setQuery(value);
 
     if (!value) {
-      // Reset to folder content if query is empty
       FetchContent(currentPath);
       return;
     }
 
-    try {
-      setContent([]); // clear previous search results
-      setLoading(true);
-
-      console.log("🔍 Starting search for:", value);
-
-      await invoke("search_command", {
-        path: currentPath,
-        query: value,
-        offset: 0,
-        limit: 1000,
-      });
-
-      setCurrentPath(currentPath);
-    } catch (err) {
-      setLoading(false);
-      console.error("Error searching files:", err);
-    }
+    setContent([]); // clear results
+    setOffset(0); // reset offset
+    fetchSearch(value, 0);
   };
 
+  // Debounce query
   useEffect(() => {
     if (!query) return;
     const timer = setTimeout(() => {
       handleSearch(query);
     }, 300);
-
     return () => clearTimeout(timer);
   }, [query]);
 
+  // Load next page on scroll bottom
+  useEffect(() => {
+    function onScroll() {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 200 &&
+        !loading &&
+        query
+      ) {
+        const nextOffset = offset + limit;
+        setOffset(nextOffset);
+        fetchSearch(query, nextOffset);
+      }
+    }
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [offset, loading, query, fetchSearch]);
+
+  // Reset to folder content when query cleared
   useEffect(() => {
     if (!query) {
       FetchContent(currentPath);
     }
   }, [currentPath, query]);
+
   return (
     <div className="relative w-full">
       <IoMdSearch

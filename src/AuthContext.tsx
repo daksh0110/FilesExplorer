@@ -26,12 +26,12 @@ interface Shortcut {
 export interface FileItem {
   name: string;
   path: string;
-  file_type: string;
-  accessed: number;
-  created: number;
-  size: string;
-  modified: string;
-  extension: string;
+  file_type?: string;
+  accessed?: number;
+  created?: number;
+  size?: string;
+  modified?: string;
+  extension?: string;
 }
 
 interface AuthContextType {
@@ -137,7 +137,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse: TokenResponse) => {
-      console.log("Login successful:", tokenResponse);
       setIsLoggedIn(true);
       setUser(tokenResponse.access_token);
       localStorage.setItem("token", tokenResponse.access_token);
@@ -153,7 +152,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoggedIn(false);
     setUser(null);
     localStorage.removeItem("token");
-    console.log("Logged out");
   };
 
   useEffect(() => {

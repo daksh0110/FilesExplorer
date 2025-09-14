@@ -42,7 +42,6 @@ export default function ContentPage() {
     setEntryName(name || null);
     setTimeout(() => setOpen(true), 10);
   };
-
   return (
     <>
       <RighClickContextMenu
