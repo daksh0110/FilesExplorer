@@ -5,7 +5,13 @@ import { listen } from "@tauri-apps/api/event";
 import { FileItem, useAuth } from "../../AuthContext";
 
 export default function NavSearch() {
-  const { currentPath, FetchContent, setCurrentPath, setContent } = useAuth();
+  const {
+    currentPath,
+    FetchContent,
+    setCurrentPath,
+    setContent,
+    setIsSearching,
+  } = useAuth();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -18,8 +24,8 @@ export default function NavSearch() {
 
     async function setupListeners() {
       unlistenResult = await listen("search://result", (event) => {
-        const r: any = event.payload;
-        setContent((prev: FileItem[]) => [...prev, r]);
+        const results: FileItem[] = event.payload as FileItem[];
+        setContent((prev: FileItem[]) => [...prev, ...results]);
       });
 
       unlistenDone = await listen("search://done", () => {
@@ -56,23 +62,35 @@ export default function NavSearch() {
 
   const handleSearch = async (value: string) => {
     setQuery(value);
+    setIsSearching(!!value);
 
     if (!value) {
+      setContent([]);
+      setOffset(0);
+      setLoading(false);
       FetchContent(currentPath);
       return;
     }
 
-    setContent([]); // clear results
-    setOffset(0); // reset offset
+    setContent([]);
+    setOffset(0);
     fetchSearch(value, 0);
   };
 
-  // Debounce query
   useEffect(() => {
-    if (!query) return;
+    // If query is empty, stop searching immediately
+    if (!query) {
+      setIsSearching(false);
+      setLoading(false);
+      setContent([]);
+      FetchContent(currentPath);
+      return;
+    }
+
     const timer = setTimeout(() => {
       handleSearch(query);
     }, 300);
+
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -87,6 +105,7 @@ export default function NavSearch() {
       ) {
         const nextOffset = offset + limit;
         setOffset(nextOffset);
+        setLoading(true);
         fetchSearch(query, nextOffset);
       }
     }

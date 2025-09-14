@@ -2,6 +2,7 @@ use chrono::{DateTime, Local};
 use ignore::Walk;
 use serde::Serialize;
 use std::fs;
+use std::path::PathBuf;
 use std::time::SystemTime;
 use tauri::{command, Emitter};
 
@@ -18,15 +19,37 @@ pub struct SearchResult {
 }
 
 #[command]
-pub async fn search_files_stream(window: tauri::Window, path: String, query: String) {
+pub async fn search_files_stream(
+    window: tauri::Window,
+    path: String,
+    query: String,
+    offset: usize,
+    limit: usize,
+) {
     let query_lower = query.to_lowercase();
+    let base_path = get_base_path(&path);
 
     tauri::async_runtime::spawn_blocking(move || {
-        for entry in Walk::new(&path) {
+        let mut skipped = 0;
+        let mut sent = 0;
+        let mut batch: Vec<SearchResult> = Vec::new();
+
+        for entry in Walk::new(&base_path) {
             if let Ok(entry) = entry {
                 let file_name = entry.file_name().to_string_lossy();
 
                 if file_name.to_lowercase().contains(&query_lower) {
+                    // Skip until we reach offset
+                    if skipped < offset {
+                        skipped += 1;
+                        continue;
+                    }
+
+                    // Stop if we already sent enough
+                    if sent >= limit {
+                        break;
+                    }
+
                     // Extract extension
                     let extension = entry
                         .path()
@@ -76,14 +99,35 @@ pub async fn search_files_stream(window: tauri::Window, path: String, query: Str
                         extension,
                     };
 
-                    // Emit result immediately
-                    let _ = window.emit("search://result", result);
+                    batch.push(result);
+                    sent += 1;
+
+                    // Emit in batches of 100
+                    if batch.len() >= 100 {
+                        let _ = window.emit("search://result", batch.clone());
+                        batch.clear();
+                    }
+                    println!("Emitting {} results", batch.len());
                 }
             }
         }
 
+        // Emit leftover results
+        if !batch.is_empty() {
+            let _ = window.emit("search://result", batch);
+        }
+
         let _ = window.emit("search://done", ());
     });
+}
+
+/// Fallback to root directory depending on OS
+fn root_path() -> PathBuf {
+    if cfg!(target_os = "windows") {
+        PathBuf::from("C:\\")
+    } else {
+        PathBuf::from("/")
+    }
 }
 
 /// Format file size into human readable string (B, KB, MB, GB, TB).
@@ -111,4 +155,18 @@ fn format_time(time: Option<SystemTime>) -> String {
         }
         None => "--".to_string(),
     }
+}
+
+fn get_base_path(path: &str) -> PathBuf {
+    let trimmed = path.trim();
+
+    if !trimmed.is_empty() {
+        let candidate = PathBuf::from(trimmed);
+        if candidate.exists() {
+            return candidate;
+        }
+    }
+
+    // Fallback to root
+    root_path()
 }

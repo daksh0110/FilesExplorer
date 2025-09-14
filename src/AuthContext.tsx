@@ -55,6 +55,8 @@ interface AuthContextType {
   setContent: (
     content: FileItem[] | ((prev: FileItem[]) => FileItem[])
   ) => void;
+  isSearching: boolean;
+  setIsSearching: (val: boolean) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -74,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [selectedType, setSelectedtype] = useState<string | null>(null);
   const [content, setContent] = useState<FileItem[]>([]);
   const [currentPath, setCurrentPath] = useState("/home");
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     Fetch();
@@ -183,6 +186,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         selectedType,
         setContent,
         setSelectedtype,
+        isSearching,
+        setIsSearching,
       }}
     >
       {children}
