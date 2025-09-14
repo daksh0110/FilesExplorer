@@ -24,13 +24,11 @@ export default function RighClickContextMenu({
   const navigate = useNavigate();
   const { FetchContent, handleDelete, ReadFile, CopyFile, Paste } = useAuth();
   async function handleCreate() {
-    console.log(path);
     const res = await invoke("createfolder", {
       path: path,
       name: "NewFolder",
       selectedType,
     });
-    console.log(res);
     FetchContent(path);
   }
 

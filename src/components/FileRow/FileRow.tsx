@@ -27,7 +27,6 @@ const FileRow: React.FC<FileRowProps> = ({
   onContextMenu,
 }) => {
   const ext = entry.extension?.toLowerCase() || "";
-
   return (
     <tr
       className="hover:bg-gray-50 cursor-pointer"

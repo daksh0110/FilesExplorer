@@ -26,12 +26,12 @@ interface Shortcut {
 export interface FileItem {
   name: string;
   path: string;
-  file_type: string;
-  accessed: number;
-  created: number;
-  size: string;
-  modified: string;
-  extension: string;
+  file_type?: string;
+  accessed?: number;
+  created?: number;
+  size?: string;
+  modified?: string;
+  extension?: string;
 }
 
 interface AuthContextType {
@@ -55,6 +55,8 @@ interface AuthContextType {
   setContent: (
     content: FileItem[] | ((prev: FileItem[]) => FileItem[])
   ) => void;
+  isSearching: boolean;
+  setIsSearching: (val: boolean) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -74,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [selectedType, setSelectedtype] = useState<string | null>(null);
   const [content, setContent] = useState<FileItem[]>([]);
   const [currentPath, setCurrentPath] = useState("/home");
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     Fetch();
@@ -137,7 +140,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = useGoogleLogin({
     onSuccess: (tokenResponse: TokenResponse) => {
-      console.log("Login successful:", tokenResponse);
       setIsLoggedIn(true);
       setUser(tokenResponse.access_token);
       localStorage.setItem("token", tokenResponse.access_token);
@@ -153,7 +155,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoggedIn(false);
     setUser(null);
     localStorage.removeItem("token");
-    console.log("Logged out");
   };
 
   useEffect(() => {
@@ -185,6 +186,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         selectedType,
         setContent,
         setSelectedtype,
+        isSearching,
+        setIsSearching,
       }}
     >
       {children}

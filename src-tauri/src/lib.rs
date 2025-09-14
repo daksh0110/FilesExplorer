@@ -75,7 +75,7 @@ async fn search_command(
     offset: usize,
     limit: usize,
 ) {
-    search_files_stream(window, path, query).await
+    search_files_stream(window, path, query, offset, limit).await
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
